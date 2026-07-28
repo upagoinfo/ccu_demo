@@ -41,7 +41,6 @@
         }
     </script>
     <style>
-        /* Estilos personalizados para animaciones y estados */
         .pulse-live {
             box-shadow: 0 0 0 0 rgba(91, 157, 38, 0.7);
             animation: pulse-green 2s infinite;
@@ -51,667 +50,801 @@
             70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(91, 157, 38, 0); }
             100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(91, 157, 38, 0); }
         }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.25s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Selector de vista protagónico */
         .role-btn { border-color: #E5E7EB; background: #FFFFFF; color: #6B7280; }
         .role-btn .role-icon { background: #F3F4F6; color: #9CA3AF; }
         .role-btn:hover { border-color: #CBD5E1; }
-        .role-btn.role-active { border-color: #3F6FE8; background: #3F6FE8; color: #FFFFFF; box-shadow: 0 4px 14px rgba(63,111,232,0.25); transform: translateY(-1px); }
+        .role-btn.role-active { border-color: #0E5C6A; background: #0E5C6A; color: #FFFFFF; shadow: 0 4px 14px rgba(14,92,106,0.25); transform: translateY(-1px); }
         .role-btn.role-active .role-icon { background: rgba(255,255,255,0.18); color: #FFFFFF; }
 
-        /* Overlay de redirección bancaria simulada */
-        .bank-redirect-step { display: none; }
-        .bank-redirect-step.active { display: block; }
         .spinner { border: 3px solid rgba(63,111,232,0.15); border-top-color: #3F6FE8; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Toasts */
-        #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 60; display: flex; flex-direction: column; gap: 0.5rem; }
+        #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 70; display: flex; flex-direction: column; gap: 0.5rem; }
         .toast { animation: fadeIn 0.25s ease-in-out; }
+
+        /* Estilo personalizado para la barra de scroll de la tabla */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #F3F4F6; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
     </style>
 </head>
 <body class="bg-ccu-mintBg font-sans text-upago-dark min-h-screen flex flex-col">
 
-    <!-- BARRA SUPERIOR: INFO DE LICITACIÓN Y SLA -->
+    <!-- BARRA SUPERIOR: INFO DE LICITACIÓN Y SLA UPAGO -->
     <header class="bg-upago-dark text-white px-4 py-2 text-xs border-b border-gray-800 sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
             <div class="flex items-center gap-3">
                 <span class="bg-upago-blue text-white font-bold px-2 py-0.5 rounded text-[10px] tracking-wider uppercase">Licitación CCU</span>
-                <span class="text-gray-300 font-medium hidden sm:inline">Demostrador de Ecosistema Integrado UPAGO</span>
+                <span class="text-gray-300 font-medium hidden sm:inline">Ecosistema Integrado UPAGO — Solución Llave en Mano</span>
             </div>
-            <span class="text-xs text-upago-lightGreen font-mono flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-upago-lightGreen inline-block animate-ping"></span> SLA 99.99% Online
-            </span>
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-upago-lightGreen font-mono flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-upago-lightGreen inline-block animate-ping"></span> SLA 99.99% Uptime
+                </span>
+            </div>
         </div>
     </header>
 
-    <!-- HEADER MI CARRO CCU (Contexto visual del e-commerce del cliente B2B) -->
-    <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-9 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-            <!-- Wordmark miCarro CCU adaptado -->
-            <div class="flex items-center font-display font-bold text-xl tracking-tight">
-                <span class="text-ccu-teal">mi</span><span class="text-ccu-teal">carro</span>
-                <span class="mx-1 text-gray-300 font-normal">|</span>
-                <span class="text-upago-dark tracking-wider">CCU</span>
-            </div>
-
-            <!-- Datos del Cliente Autenticado (Brief 3.2: Contexto del Cliente) -->
-            <div class="flex items-center space-x-4 text-right">
-                <div class="hidden sm:block">
-                    <div class="text-xs font-bold text-gray-800">BOTILLERIAS CLEBER SPA</div>
-                    <div class="text-[11px] text-gray-500">ID: 2343576 | Los Militares 6050, Las Condes</div>
-                </div>
-                <div class="bg-ccu-mintBg border border-ccu-teal/20 rounded-lg p-2 flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-ccu-teal text-white flex items-center justify-center font-bold text-xs">BC</div>
-                    <div class="text-left text-[11px] leading-tight">
-                        <span class="block font-semibold text-ccu-teal">Cliente Verificado</span>
-                        <span class="text-gray-500">RUT: 76.452.110-K</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- SELECTOR DE VISTA — PROTAGÓNICO (permite a la mesa evaluadora de CCU auditar
-         la experiencia de los 3 actores del ecosistema: cliente, transportista y backoffice) -->
-    <div class="bg-white border-b border-gray-200 sticky top-[5.75rem] z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 text-center sm:text-left">Selector de vista — Demostración de los 3 actores del ecosistema</p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button onclick="switchRole('client')" id="btn-role-client" class="role-btn flex items-center gap-3 p-3.5 rounded-2xl border-2 transition-all text-left">
-                    <div class="role-icon w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"><i class="fa-solid fa-shop"></i></div>
-                    <div>
-                        <span class="block text-sm font-extrabold">Cliente B2B</span>
-                        <span class="block text-[11px] opacity-80">Portal miCarro CCU</span>
+    <!-- SELECTOR DE VISTA PROTAGÓNICO (GRID 2x2 EN MÓVIL, 4 EN FILA EN DESKTOP) -->
+    <div class="bg-white border-b border-gray-200 sticky top-8 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 text-center sm:text-left">
+                Demostración de Plataformas B2B (Licitación CCU)
+            </p>
+            <!-- GRID RESPONSIVO: 2x2 en móviles/tablets (grid-cols-2) y 4 columnas en desktop (md:grid-cols-4) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <!-- VISTA 1: miCarro CCU -->
+                <button onclick="switchRole('micarro')" id="btn-role-micarro" class="role-btn flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border-2 transition-all text-left">
+                    <div class="role-icon w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-sm sm:text-base flex-shrink-0"><i class="fa-solid fa-cart-shopping"></i></div>
+                    <div class="min-w-0">
+                        <span class="block text-[11px] sm:text-xs font-extrabold truncate">miCarro CCU</span>
+                        <span class="block text-[9px] sm:text-[10px] opacity-80 truncate">e-Commerce &amp; Checkout</span>
                     </div>
                 </button>
-                <button onclick="switchRole('driver')" id="btn-role-driver" class="role-btn flex items-center gap-3 p-3.5 rounded-2xl border-2 transition-all text-left">
-                    <div class="role-icon w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"><i class="fa-solid fa-truck"></i></div>
-                    <div>
-                        <span class="block text-sm font-extrabold">Transportista</span>
-                        <span class="block text-[11px] opacity-80">Terminal EPV en ruta</span>
+
+                <!-- VISTA 2: Portal CreCCU -->
+                <button onclick="switchRole('creccu')" id="btn-role-creccu" class="role-btn flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border-2 transition-all text-left">
+                    <div class="role-icon w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-sm sm:text-base flex-shrink-0"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="min-w-0">
+                        <span class="block text-[11px] sm:text-xs font-extrabold truncate">Portal CreCCU</span>
+                        <span class="block text-[9px] sm:text-[10px] opacity-80 truncate">Portal Financiero &amp; PAC</span>
                     </div>
                 </button>
-                <button onclick="switchRole('backoffice')" id="btn-role-backoffice" class="role-btn flex items-center gap-3 p-3.5 rounded-2xl border-2 transition-all text-left">
-                    <div class="role-icon w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"><i class="fa-solid fa-chart-line"></i></div>
-                    <div>
-                        <span class="block text-sm font-extrabold">Backoffice</span>
-                        <span class="block text-[11px] opacity-80">Dashboard &amp; Analytics</span>
+
+                <!-- VISTA 3: Notificación EPV & Wallet -->
+                <button onclick="switchRole('epv')" id="btn-role-epv" class="role-btn flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border-2 transition-all text-left">
+                    <div class="role-icon w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-sm sm:text-base flex-shrink-0"><i class="fa-solid fa-truck-ramp-box"></i></div>
+                    <div class="min-w-0">
+                        <span class="block text-[11px] sm:text-xs font-extrabold truncate">Notificación EPV</span>
+                        <span class="block text-[9px] sm:text-[10px] opacity-80 truncate">Reajustes &amp; Wallet/Payout</span>
+                    </div>
+                </button>
+
+                <!-- VISTA 4: Backoffice -->
+                <button onclick="switchRole('backoffice')" id="btn-role-backoffice" class="role-btn flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border-2 transition-all text-left">
+                    <div class="role-icon w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-sm sm:text-base flex-shrink-0"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="min-w-0">
+                        <span class="block text-[11px] sm:text-xs font-extrabold truncate">Backoffice &amp; SAP</span>
+                        <span class="block text-[9px] sm:text-[10px] opacity-80 truncate">Conciliación &amp; Analytics</span>
                     </div>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL DINÁMICO POR ROLES -->
+    <!-- CONTENEDOR PRINCIPAL DINÁMICO -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
 
         <!-- ================================================================================= -->
-        <!-- VISTA 1: CLIENTE B2B (MÓDULOS DE RECAUDACIÓN CRECCU Y PAGO DE PEDIDOS) -->
+        <!-- MOCKUP 1: miCarro CCU (e-Commerce B2B) -->
         <!-- ================================================================================= -->
-        <section id="view-client" class="space-y-6 fade-in">
+        <section id="view-micarro" class="space-y-6 fade-in max-w-3xl mx-auto">
 
-            <!-- BANNER DE GARANTÍA DE SERVICIO Y SEGURIDAD (Brief 2.2 y 2.3) -->
-            <div class="bg-white border-l-4 border-upago-blue rounded-r-xl p-4 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 bg-upago-blue/10 text-upago-blue rounded-lg">
-                        <i class="fa-solid fa-shield-halved text-xl"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-sm font-bold text-upago-dark">Pasarela Integrada UPAGO — Operación Segura CCU</h2>
-                        <p class="text-xs text-gray-600">Recaudación en tiempo real para CreCCU y checkout de pedidos. Cumplimiento PCI-DSS Nivel 1 y encriptación bancaria.</p>
-                    </div>
+            <!-- HEADER MICARRO CCU -->
+            <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex justify-between items-center">
+                <div class="flex items-center font-display font-bold text-xl tracking-tight">
+                    <span class="text-ccu-teal">mi</span><span class="text-ccu-teal">carro</span>
+                    <span class="mx-1 text-gray-300 font-normal">|</span>
+                    <span class="text-upago-dark tracking-wider">CCU</span>
                 </div>
-                <div class="flex items-center gap-3 text-xs text-gray-500 border-t md:border-t-0 pt-2 md:pt-0 w-full md:w-auto justify-between md:justify-end">
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-lock text-upago-green"></i> PCI-DSS Ready</span>
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-500"></i> Sync SAP ERP</span>
+                <div class="text-right text-xs">
+                    <span class="font-bold text-gray-800 block">BOTILLERIAS CLEBER SPA</span>
+                    <span class="text-[10px] text-gray-500">RUT: 76.452.110-K | Local 6050</span>
                 </div>
             </div>
 
-            <!-- GRID PRINCIPAL DEL CLIENTE -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <!-- SECCIÓN IZQUIERDA: OBJETIVO 1 — RECAUDACIÓN CRECCU Y CUPO DE CRÉDITO (Brief 3.2) -->
-                <div class="lg:col-span-7 space-y-6">
-                    
-                    <!-- BRIEF 3.2: CONSULTA DE DEUDA Y NOTIFICACIÓN/LIMPIEZA DE CUPO EN TIEMPO REAL -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative overflow-hidden">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <span class="text-[11px] font-bold tracking-wider uppercase text-ccu-teal bg-ccu-mintBg px-2 py-0.5 rounded border border-ccu-teal/20">Objetivo 1 — Brief 3.2</span>
-                                <h3 class="text-lg font-bold text-upago-dark mt-1">Línea de Crédito Interna CreCCU</h3>
-                            </div>
-                            <button onclick="simulateDebtQuery()" class="text-xs text-upago-blue hover:underline flex items-center gap-1">
-                                <i class="fa-solid fa-rotate-right"></i> Sincronizar con SAP
-                            </button>
-                        </div>
-
-                        <!-- ESTADO DE LA LÍNEA DE CRÉDITO -->
-                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200/80 mb-6">
-                            <div class="flex justify-between text-xs text-gray-600 mb-2">
-                                <span>Línea total asignada: <strong class="text-gray-800">$2.500.000</strong></span>
-                                <span id="credit-percentage-label" class="font-bold text-amber-600">Cupo ocupado: 72%</span>
-                            </div>
-                            
-                            <!-- Barra de Progreso Dinámica -->
-                            <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden flex">
-                                <div id="credit-bar-used" class="bg-amber-500 h-full transition-all duration-700" style="width: 72%"></div>
-                                <div id="credit-bar-free" class="bg-upago-green h-full transition-all duration-700" style="width: 28%"></div>
-                            </div>
-                            
-                            <div class="flex justify-between items-center mt-3 text-xs">
-                                <div>
-                                    <span class="text-gray-500 block text-[10px]">DEUDA PENDIENTE</span>
-                                    <span id="debt-amount-display" class="font-bold text-lg text-upago-dark">$1.800.000</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-gray-500 block text-[10px]">CUPO DISPONIBLE ACTUAL</span>
-                                    <span id="credit-available-display" class="font-bold text-lg text-upago-green">$700.000</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- SELECCIÓN DE MONTO DE ABONO / PAGO DE FACTURAS -->
-                        <div class="space-y-4">
-                            <label class="block text-xs font-bold text-gray-700">Selecciona el monto a abonar o liberar:</label>
-                            
-                            <div class="grid grid-cols-3 gap-2">
-                                <button type="button" onclick="setAbonoAmount(1800000)" class="p-3 border rounded-xl text-center text-xs hover:border-upago-blue focus:border-upago-blue focus:ring-1 focus:ring-upago-blue transition-all bg-white">
-                                    <span class="block font-bold text-upago-dark">Deuda Total</span>
-                                    <span class="text-[10px] text-gray-500">$1.800.000</span>
-                                </button>
-                                <button type="button" onclick="setAbonoAmount(1000000)" class="p-3 border rounded-xl text-center text-xs border-upago-blue bg-upago-blue/5 text-upago-blue font-semibold">
-                                    <span class="block font-bold">Abono Sugerido</span>
-                                    <span class="text-[10px] text-gray-500">$1.000.000</span>
-                                </button>
-                                <button type="button" onclick="setAbonoAmount(500000)" class="p-3 border rounded-xl text-center text-xs hover:border-upago-blue transition-all bg-white">
-                                    <span class="block font-bold text-upago-dark">Abono Mínimo</span>
-                                    <span class="text-[10px] text-gray-500">$500.000</span>
-                                </button>
-                            </div>
-
-                            <!-- INPUT PERSONALIZADO Y MEDIO DE PAGO FASE 1 -->
-                            <div class="space-y-3 pt-2">
-                                <div class="relative">
-                                    <span class="absolute left-3 top-2.5 text-gray-400 font-bold">$</span>
-                                    <input type="number" id="input-abono-monto" value="1000000" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg text-sm font-bold text-upago-dark focus:ring-2 focus:ring-upago-blue focus:outline-none">
-                                </div>
-
-                                <!-- MEDIOS DE PAGO FASE 1 (Brief 3.1: Transferencia Simplificada / Botones Bancarios) -->
-                                <div class="space-y-2">
-                                    <span class="text-[11px] font-semibold text-gray-600 block">Medio de Pago (Fase 1 Licitación):</span>
-
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <label class="border border-upago-blue bg-upago-blue/5 p-3 rounded-xl flex items-center space-x-2 cursor-pointer">
-                                            <input type="radio" name="payment-method-creccu" value="ts" checked onchange="toggleCreccuBankGrid(false)" class="text-upago-blue focus:ring-upago-blue">
-                                            <div>
-                                                <span class="text-xs font-bold block text-upago-dark">Transferencia Simplificada</span>
-                                                <span class="text-[10px] text-gray-500">Conciliación e inicio automático</span>
-                                            </div>
-                                        </label>
-                                        <label class="border border-gray-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:border-gray-300">
-                                            <input type="radio" name="payment-method-creccu" value="bb" onchange="toggleCreccuBankGrid(true)" class="text-upago-blue focus:ring-upago-blue">
-                                            <div>
-                                                <span class="text-xs font-bold block text-upago-dark">Botón Bancario</span>
-                                                <span class="text-[10px] text-gray-500">Accesos directos a portales bancarios</span>
-                                            </div>
-                                        </label>
-                                    </div>
-
-                                    <!-- Grilla de bancos reales (Brief 3.1: "Accesos directos a los portales de los principales bancos") -->
-                                    <div id="creccu-bank-grid" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-                                        <button type="button" onclick="selectCreccuBank('Banco de Chile', this)" class="bank-choice-btn p-2.5 border border-gray-200 rounded-lg text-center hover:border-upago-blue transition-all bg-white">
-                                            <i class="fa-solid fa-building-columns text-upago-blue block mb-1"></i>
-                                            <span class="text-[10px] font-bold text-gray-700">Banco de Chile</span>
-                                        </button>
-                                        <button type="button" onclick="selectCreccuBank('Santander', this)" class="bank-choice-btn p-2.5 border border-gray-200 rounded-lg text-center hover:border-upago-blue transition-all bg-white">
-                                            <i class="fa-solid fa-building-columns text-red-600 block mb-1"></i>
-                                            <span class="text-[10px] font-bold text-gray-700">Santander</span>
-                                        </button>
-                                        <button type="button" onclick="selectCreccuBank('BCI', this)" class="bank-choice-btn p-2.5 border border-gray-200 rounded-lg text-center hover:border-upago-blue transition-all bg-white">
-                                            <i class="fa-solid fa-building-columns text-emerald-700 block mb-1"></i>
-                                            <span class="text-[10px] font-bold text-gray-700">BCI</span>
-                                        </button>
-                                        <button type="button" onclick="selectCreccuBank('BancoEstado', this)" class="bank-choice-btn p-2.5 border border-gray-200 rounded-lg text-center hover:border-upago-blue transition-all bg-white">
-                                            <i class="fa-solid fa-building-columns text-orange-600 block mb-1"></i>
-                                            <span class="text-[10px] font-bold text-gray-700">BancoEstado</span>
-                                        </button>
-                                    </div>
-                                    <p id="creccu-bank-selected-label" class="hidden text-[11px] font-semibold text-upago-blue"></p>
-                                </div>
-
-                                <!-- BOTÓN CTA PRINCIPAL DE RECAUDACIÓN -->
-                                <button onclick="executeCreCCUPayment()" class="w-full bg-ccu-actionGreen hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-sm text-sm flex items-center justify-center gap-2 transition-all pulse-live mt-4">
-                                    <i class="fa-solid fa-lock"></i>
-                                    <span>Pagar y Liberar Cupo CreCCU Instantáneamente</span>
-                                </button>
-                                <p class="text-[10px] text-center text-gray-500">Notificación inmediata vía Webhook a SAP ERP para liberación de cupo en &lt; 3 segundos.</p>
-
-                                <!-- Estado de rechazo inline (Brief 3.3: resolución de errores con reintento) -->
-                                <div id="creccu-error-inline" class="hidden bg-red-50 border border-red-200 rounded-xl p-3.5 space-y-2">
-                                    <div class="flex items-center gap-2 text-red-600 font-bold text-xs"><i class="fa-solid fa-triangle-exclamation"></i>Pago rechazado — fondos insuficientes</div>
-                                    <p class="text-[11px] text-red-500">El banco de origen rechazó la transacción. Puedes reintentar con el mismo medio u optar por otro, sin perder tu abono.</p>
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <button onclick="executeCreCCUPayment()" class="bg-upago-blue hover:bg-upago-blue/90 text-white font-bold py-2 rounded-lg text-[11px] flex items-center justify-center gap-1.5"><i class="fa-solid fa-rotate-right"></i>Reintentar</button>
-                                        <button onclick="document.getElementById('creccu-error-inline').classList.add('hidden')" class="border border-gray-200 hover:bg-gray-50 text-gray-500 font-bold py-2 rounded-lg text-[11px]">Elegir otro medio</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- PASOS CHECKOUT MICARRO CCU -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 space-y-6">
+                
+                <!-- STEPPER -->
+                <div class="flex items-center justify-around border-b pb-4 text-xs font-bold text-gray-500">
+                    <div id="step-nav-1" class="flex items-center gap-1.5 text-ccu-actionGreen">
+                        <span class="w-6 h-6 rounded-full bg-ccu-actionGreen text-white flex items-center justify-center text-[10px]">1</span>
+                        <span>Despacho</span>
                     </div>
+                    <div id="step-nav-2" class="flex items-center gap-1.5 text-gray-400">
+                        <span class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px]">2</span>
+                        <span>Pago</span>
+                    </div>
+                    <div id="step-nav-3" class="flex items-center gap-1.5 text-gray-400">
+                        <span class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px]">3</span>
+                        <span>Resumen</span>
+                    </div>
+                </div>
 
-                    <!-- REFINAMIENTO DE ERROR / SIMULADOR DE RESILIENCIA (Requisito de Usabilidad) -->
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-2 text-amber-800">
-                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
-                            <span>Simular fallo de banco o fondos insuficientes para probar resiliencia</span>
-                        </div>
-                        <button onclick="toggleErrorSim()" id="btn-err-toggle" class="bg-amber-200 text-amber-900 px-2.5 py-1 rounded font-bold hover:bg-amber-300 transition-all">
-                            Activar Simulación de Error
+                <!-- PASO 1: CARRITO Y RESUMEN (MicarroCCU_resumen carrito.webp) -->
+                <div id="micarro-step-1" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-base text-gray-800">Checkout del Pedido N°S1552286</h3>
+                        <button onclick="clearMicarroCart()" class="text-xs text-red-500 font-bold hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can"></i> Limpiar carro
                         </button>
                     </div>
 
+                    <!-- CARD DE PRODUCTO EXTRAÍDO DE CAPTURA REAL CON CONTROLES + Y - FUNCIONALES -->
+                    <div id="micarro-item-card" class="border rounded-2xl p-4 flex gap-4 items-center bg-gray-50/50 transition-all">
+                        <div class="relative w-20 h-20 bg-white border rounded-xl flex items-center justify-center flex-shrink-0">
+                            <span class="absolute top-1 left-1 bg-ccu-discountRed text-white text-[9px] font-black px-1 rounded">-23%</span>
+                            <i class="fa-solid fa-bottle-water text-3xl text-ccu-teal"></i>
+                        </div>
+                        <div class="flex-1 space-y-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800">ROYAL GUARD GOLDEN 650cc</h4>
+                                    <p class="text-[11px] text-gray-500">12 VIDRIO NO RETORNABLES 650.00</p>
+                                </div>
+                                <span id="micarro-item-total-top" class="font-extrabold text-sm text-gray-900 font-mono">$11.076</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-1">
+                                <span class="bg-ccu-actionGreen text-white text-[9px] font-bold px-2 py-0.5 rounded">Descuento x Volumen</span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="updateMicarroQty(-1)" class="w-8 h-8 bg-white border rounded-lg font-bold text-sm hover:bg-gray-100 flex items-center justify-center shadow-sm active:scale-95 transition-all text-gray-800">-</button>
+                                    <span id="micarro-qty-display" class="font-bold text-sm w-6 text-center">1</span>
+                                    <button onclick="updateMicarroQty(1)" class="w-8 h-8 bg-white border rounded-lg font-bold text-sm hover:bg-gray-100 flex items-center justify-center shadow-sm active:scale-95 transition-all text-gray-800">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ESTADO CARRO VACÍO (MUESTRA CUANDO CANTIDAD LLEGA A 0 Y SE CONFIRMA BORRADO) -->
+                    <div id="micarro-empty-state" class="hidden border border-dashed border-gray-300 rounded-2xl p-8 text-center space-y-3 bg-gray-50/50 fade-in">
+                        <div class="w-12 h-12 bg-gray-200 text-gray-400 rounded-full flex items-center justify-center text-xl mx-auto">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-gray-700">Tu carrito de compras está vacío</h4>
+                        <p class="text-xs text-gray-500">Has eliminado los productos del pedido de prueba.</p>
+                        <button onclick="restoreMicarroCart()" class="bg-ccu-teal hover:bg-emerald-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 mx-auto">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Restaurar Pedido N°S1552286</span>
+                        </button>
+                    </div>
+
+                    <!-- DESGLOSE DE PAGO REAL DINÁMICO -->
+                    <div id="micarro-summary-box" class="bg-gray-50 rounded-2xl p-4 space-y-2 text-xs border border-gray-200/80 transition-all">
+                        <h4 class="font-bold text-gray-700 border-b pb-1">Detalles del pago</h4>
+                        <div class="flex justify-between text-gray-600"><span>Subtotal:</span><span id="micarro-subtotal-val" class="font-mono">$9.845</span></div>
+                        <div class="flex justify-between text-ccu-discountRed font-semibold"><span>Descuento:</span><span id="micarro-discount-val" class="font-mono">-$3.429</span></div>
+                        <div class="flex justify-between text-gray-600"><span>IVA:</span><span id="micarro-iva-val" class="font-mono">$1.558</span></div>
+                        <div class="flex justify-between text-gray-600"><span>I.A.B:</span><span id="micarro-iab-val" class="font-mono">$1.315</span></div>
+                        <div class="flex justify-between text-gray-600"><span>Valor Flete:</span><span id="micarro-flete-val" class="font-mono">$1.786</span></div>
+                        <div class="flex justify-between items-baseline border-t pt-2 font-bold text-sm text-gray-900">
+                            <span>Total a pagar:</span>
+                            <span id="micarro-total-val" class="text-lg text-ccu-teal font-extrabold font-mono">$11.076</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-continue-micarro" onclick="goToMicarroStep(2)" class="w-full bg-ccu-teal hover:bg-emerald-800 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                        <span>Continuar a Selección de Pago</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
 
-                <!-- SECCIÓN DERECHA: OBJETIVO 2 — PAGO DE PEDIDOS IN-APP / CARRITO (Brief 3.1) -->
-                <div class="lg:col-span-5 space-y-6">
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex justify-between items-center mb-4">
+                <!-- PASO 2: SELECCIÓN MÉTODO DE PAGO (MicarroCCU_selección forma de pago.webp) -->
+                <div id="micarro-step-2" class="hidden space-y-4">
+                    <h3 class="font-bold text-base text-gray-800">Seleccione método de pago</h3>
+
+                    <div class="space-y-3">
+                        <!-- OPCIÓN 1: CRÉDITO CRECCU (RÉPLICA CAPTURA REAL) -->
+                        <label class="border-2 border-ccu-teal bg-ccu-mintBg p-4 rounded-2xl flex items-center justify-between cursor-pointer shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="micarro-payment-method" value="creccu" checked class="text-ccu-teal text-lg">
+                                <div>
+                                    <span class="font-bold text-sm block text-gray-900">Crédito CRECCU</span>
+                                    <span class="text-xs text-emerald-700 font-semibold block">Monto disponible $520.018</span>
+                                </div>
+                            </div>
+                            <span class="bg-ccu-teal text-white text-[10px] font-bold px-2.5 py-1 rounded-full">Cupo Aprobado</span>
+                        </label>
+
+                        <!-- OPCIÓN 2: TRANSFERENCIA BANCARIA (UPAGO INTEGRADO) -->
+                        <label class="border p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-gray-300 transition-all bg-white">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="micarro-payment-method" value="transfer" class="text-ccu-teal text-lg">
+                                <div>
+                                    <span class="font-bold text-sm block text-gray-900">Transferencia Bancaria</span>
+                                    <span class="text-xs text-gray-500 block">Transferencia Simplificada (UPAGO)</span>
+                                </div>
+                            </div>
+                            <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded">Fase 1</span>
+                        </label>
+
+                        <!-- OPCIÓN 3: CONTADO -->
+                        <label class="border p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-gray-300 transition-all bg-white">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="micarro-payment-method" value="contado" class="text-ccu-teal text-lg">
+                                <div>
+                                    <span class="font-bold text-sm block text-gray-900">Contado</span>
+                                    <span class="text-xs text-gray-500 block">Pago contra entrega en camión</span>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- OPCIÓN 4: CHEQUE (INACTIVO EN CAPTURA REAL) -->
+                        <label class="border border-gray-200 bg-gray-50 p-4 rounded-2xl flex items-center justify-between opacity-60 cursor-not-allowed">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="micarro-payment-method" disabled class="text-gray-400">
+                                <div>
+                                    <span class="font-bold text-sm block text-gray-500">Cheque / Solo Firma</span>
+                                    <span class="text-xs text-gray-400 block">Cheque / Solo Firma no disponible</span>
+                                </div>
+                            </div>
+                            <span class="bg-gray-200 text-gray-500 text-[10px] font-bold px-2 py-0.5 rounded">Inactivo</span>
+                        </label>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="goToMicarroStep(1)" class="w-1/3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3.5 px-4 rounded-xl text-xs">Atrás</button>
+                        <button onclick="goToMicarroStep(3)" class="w-2/3 bg-ccu-teal hover:bg-emerald-800 text-white font-bold py-3.5 px-4 rounded-xl text-xs shadow-md">Continuar al Resumen</button>
+                    </div>
+                </div>
+
+                <!-- PASO 3: RESUMEN FINAL ANTES DE CONFIRMAR (MicarroCCU_paso final resumen antes de confirmar compra.webp) -->
+                <div id="micarro-step-3" class="hidden space-y-4">
+                    <h3 class="font-bold text-base text-gray-800">Resumen de compra</h3>
+
+                    <!-- GRID DESPACHO Y PAGO -->
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200">
+                            <span class="text-gray-500 font-bold block mb-1"><i class="fa-solid fa-calendar-days mr-1"></i>Despacho</span>
+                            <span class="font-bold text-gray-900 block">Martes, 28 de Julio de 2026</span>
+                        </div>
+                        <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200">
+                            <span class="text-gray-500 font-bold block mb-1"><i class="fa-solid fa-credit-card mr-1"></i>Pago</span>
+                            <span id="summary-payment-selected-label" class="font-bold text-ccu-teal block">Crédito CRECCU</span>
+                        </div>
+                    </div>
+
+                    <!-- DESGLOSE REPETIDO -->
+                    <div class="bg-gray-50 rounded-2xl p-4 space-y-2 text-xs border border-gray-200/80">
+                        <h4 class="font-bold text-gray-700 border-b pb-1">Detalles del pago</h4>
+                        <div class="flex justify-between text-gray-600"><span>Subtotal:</span><span id="micarro-step3-subtotal-val" class="font-mono">$9.845</span></div>
+                        <div class="flex justify-between text-ccu-discountRed font-semibold"><span>Descuento:</span><span id="micarro-step3-discount-val" class="font-mono">-$3.429</span></div>
+                        <div class="flex justify-between text-gray-600"><span>IVA:</span><span id="micarro-step3-iva-val" class="font-mono">$1.558</span></div>
+                        <div class="flex justify-between text-gray-600"><span>I.A.B:</span><span id="micarro-step3-iab-val" class="font-mono">$1.315</span></div>
+                        <div class="flex justify-between text-gray-600"><span>Valor Flete:</span><span id="micarro-step3-flete-val" class="font-mono">$1.786</span></div>
+                        <div class="flex justify-between items-baseline border-t pt-2 font-bold text-sm text-gray-900">
+                            <span>Total a pagar:</span>
+                            <span id="micarro-step3-total-val" class="text-xl text-ccu-teal font-black font-mono">$11.076</span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="goToMicarroStep(2)" class="w-1/3 border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3.5 px-4 rounded-xl text-xs">Volver</button>
+                        <button onclick="confirmMicarroPurchase()" class="w-2/3 bg-ccu-actionGreen hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl text-sm shadow-md pulse-live">
+                            Realizar compra
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================================================================================= -->
+        <!-- MOCKUP 2: PORTAL FINANCIERO CRECCU (HOME & ABONO DE DEUDA + SUSCRIPCIÓN PAC/PAT) -->
+        <!-- ================================================================================= -->
+        <section id="view-creccu" class="hidden space-y-6 fade-in max-w-3xl mx-auto">
+
+            <!-- HEADER CRECCU PORTAL FINANCIERO -->
+            <div class="bg-ccu-teal text-white p-5 rounded-2xl shadow-md space-y-4">
+                <div class="flex justify-between items-center border-b border-teal-600/60 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="font-display font-extrabold text-lg tracking-wider">CRE | CCU</span>
+                        <span class="bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">Vigente</span>
+                    </div>
+                    <span class="text-[10px] text-teal-100 font-mono"><i class="fa-solid fa-clock mr-1"></i>Última actualización 15:36</span>
+                </div>
+
+                <!-- CARD CUPO Y SALDOS (DATOS REAELS DE CAPTURA CreCCU_home.webp) -->
+                <div>
+                    <span class="text-xs text-teal-100 block">Monto utilizado</span>
+                    <span id="creccu-used-amount-display" class="text-3xl font-black text-white">$233.887</span>
+                </div>
+
+                <!-- BARRA DE CUPO DISPONIBLE -->
+                <div class="space-y-1.5">
+                    <div class="w-full bg-teal-900/60 h-3 rounded-full overflow-hidden flex p-0.5 border border-teal-500/30">
+                        <div id="creccu-used-bar" class="bg-amber-400 h-full rounded-full transition-all duration-700" style="width: 29%"></div>
+                        <div id="creccu-free-bar" class="bg-emerald-400 h-full rounded-full transition-all duration-700" style="width: 71%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-teal-100 font-medium pt-1">
+                        <span>Disponible: <strong id="creccu-free-amount-display" class="text-white font-extrabold">$566.113</strong></span>
+                        <span>Total: <strong class="text-white font-extrabold">$800.000</strong></span>
+                    </div>
+                </div>
+
+                <!-- ACCIONES PORTAL CRECCU -->
+                <div class="grid grid-cols-3 gap-2 pt-2">
+                    <button onclick="showToast('Estado de Cuenta', 'Descargando cartola consolidada desde SAP ERP...', 'fa-file-pdf', 'blue')" class="border border-teal-300/40 hover:bg-teal-700/50 text-white font-bold py-2.5 px-3 rounded-xl text-xs transition-all">
+                        Estado de cuenta
+                    </button>
+                    <button onclick="openCreccuPayModal()" class="bg-ccu-actionGreen hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow transition-all pulse-live flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-lock text-xs"></i> Pagar / Abonar
+                    </button>
+                    <button onclick="openPacSubscriptionModal()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold py-2.5 px-3 rounded-xl text-xs transition-all flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-arrows-rotate text-amber-300"></i> Activar PAC/PAT
+                    </button>
+                </div>
+            </div>
+
+            <!-- MOVIMIENTOS DEL MES ACTUAL -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-base text-gray-800">Movimientos mes actual</h3>
+                    <div class="flex gap-2">
+                        <button id="btn-filter-unfactored" onclick="toggleCreccuFilter('no-facturados')" class="bg-ccu-actionGreen text-white text-xs font-bold px-3 py-1 rounded-full transition-all">No Facturados</button>
+                        <button id="btn-filter-factored" onclick="toggleCreccuFilter('facturados')" class="text-gray-500 text-xs font-bold px-3 py-1 rounded-full hover:bg-gray-100 transition-all">Facturados</button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between text-xs font-bold p-3 bg-gray-50 rounded-xl text-gray-700">
+                    <span id="label-summary-left" class="text-ccu-teal"><i class="fa-solid fa-cart-shopping mr-1"></i>Compras: $248.887</span>
+                    <span id="label-summary-right" class="text-emerald-600"><i class="fa-solid fa-circle-check mr-1"></i>Pagos: $15.000</span>
+                </div>
+
+                <!-- MOVIMIENTOS NO FACTURADOS (POR DEFECTO) -->
+                <div id="movements-unfactored" class="divide-y divide-gray-100 text-xs space-y-1">
+                    <div class="py-3 space-y-1">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Lunes 4 de mayo de 2026</span>
+                        <div class="flex justify-between font-bold text-gray-800"><span>Compra #7788843</span><span>$39.840</span></div>
+                        <div class="flex justify-between font-bold text-emerald-600"><span>Pago CreCCU</span><span>+$40.842</span></div>
+                    </div>
+                    <div class="py-3 space-y-1">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Viernes 1 de mayo de 2026</span>
+                        <div class="flex justify-between font-bold text-gray-800"><span>Vendedor Toberto Gomez 364 - Los Angeles</span><span>$2.990</span></div>
+                    </div>
+                    <div class="py-3 space-y-1">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Martes 26 de Abril de 2026</span>
+                        <div class="flex justify-between font-bold text-emerald-600"><span>Nota de crédito (Wallet/Ajuste EPV)</span><span>+$5.954</span></div>
+                    </div>
+                </div>
+
+                <!-- MOVIMIENTOS FACTURADOS -->
+                <div id="movements-factored" class="hidden divide-y divide-gray-100 text-xs space-y-1">
+                    <div class="py-3 space-y-1">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Lunes 15 de Abril de 2026</span>
+                        <div class="flex justify-between font-bold text-gray-800"><span>Factura #F-8821901 — Cervezas &amp; Aguas</span><span>$180.200</span></div>
+                        <div class="flex justify-between text-gray-500"><span>Estado: Pagada (Transferencia Simplificada)</span><span class="text-emerald-600 font-bold">Consolidada SAP</span></div>
+                    </div>
+                    <div class="py-3 space-y-1">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Miércoles 1 de Abril de 2026</span>
+                        <div class="flex justify-between font-bold text-gray-800"><span>Factura #F-8810232 — Pedido Masivo Ruta Talca</span><span>$420.000</span></div>
+                        <div class="flex justify-between text-gray-500"><span>Estado: Pagada (PAC Automático Día 20)</span><span class="text-emerald-600 font-bold">Consolidada SAP</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL SELECCIÓN DE DEUDA Y MEDIO DE PAGO CRECCU -->
+            <div id="creccu-pay-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
+                <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <h3 class="text-sm font-bold text-ccu-teal">Portal de pago On-line de CRE | CCU</h3>
+                        <button onclick="closeCreccuPayModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+
+                    <!-- RESUMEN DEUDA EXTRAÍDO DE CreCCU_cuanto desea abonar.webp -->
+                    <div id="creccu-pay-step-1" class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-2xl space-y-2 text-xs border border-gray-200">
+                            <div class="flex justify-between text-gray-600"><span>Total facturado por pagar:</span><strong class="text-gray-900">$922.122</strong></div>
+                            <div class="flex justify-between text-gray-600"><span>Pago mínimo por pagar:</span><strong class="text-gray-900">$89.791</strong></div>
+                            <div class="flex justify-between text-gray-600"><span>Cupo utilizado:</span><strong class="text-amber-600 font-extrabold">$922.122</strong></div>
+                        </div>
+
+                        <label class="block text-xs font-bold text-gray-700">Selecciona el monto a pagar:</label>
+                        <div class="space-y-2 text-xs">
+                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-amount-option" value="922122" checked class="text-ccu-teal">
+                                <span class="font-bold text-gray-800">Total facturado ($922.122)</span>
+                            </label>
+                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-amount-option" value="89791" class="text-ccu-teal">
+                                <span class="font-bold text-gray-800">Pago mínimo ($89.791)</span>
+                            </label>
+                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-amount-option" value="922122" class="text-ccu-teal">
+                                <span class="font-bold text-gray-800">Valor deuda total</span>
+                            </label>
+                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-amount-option" value="variable" class="text-ccu-teal">
+                                <span class="font-bold text-gray-800">Pago variable</span>
+                            </label>
+                        </div>
+
+                        <button onclick="goToCreccuPayStep(2)" class="w-full bg-ccu-teal hover:bg-emerald-800 text-white font-bold py-3.5 px-4 rounded-xl text-xs shadow-md">
+                            Monto seleccionado a pagar: $922.122
+                        </button>
+                    </div>
+
+                    <!-- PASO 2: SELECCIÓN MEDIO DE PAGO -->
+                    <div id="creccu-pay-step-2" class="hidden space-y-4">
+                        <div class="bg-ccu-mintBg p-3 rounded-xl flex justify-between items-center text-xs">
+                            <span class="text-gray-600">Monto a pagar:</span>
+                            <strong class="text-base text-ccu-teal font-extrabold">$922.122</strong>
+                        </div>
+
+                        <label class="block text-xs font-bold text-gray-700">Selecciona el medio de pago:</label>
+                        <div class="space-y-2 text-xs">
+                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-bank-choice" value="Banco de Chile" checked class="text-ccu-teal">
+                                <i class="fa-solid fa-building-columns text-upago-blue text-base"></i>
+                                <span class="font-bold text-gray-800">Banco de Chile</span>
+                            </label>
+                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-bank-choice" value="BancoEstado" class="text-ccu-teal">
+                                <i class="fa-solid fa-landmark text-orange-600 text-base"></i>
+                                <span class="font-bold text-gray-800">BancoEstado</span>
+                            </label>
+                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-bank-choice" value="SERVIPAG" class="text-ccu-teal">
+                                <i class="fa-solid fa-receipt text-amber-500 text-base"></i>
+                                <span class="font-bold text-gray-800">SERVIPAG</span>
+                            </label>
+                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-bank-choice" value="Santander" class="text-ccu-teal">
+                                <i class="fa-solid fa-credit-card text-red-600 text-base"></i>
+                                <span class="font-bold text-gray-800">Santander</span>
+                            </label>
+                            <label class="p-3 border-2 border-upago-blue bg-upago-blue/5 rounded-xl flex items-center gap-3 cursor-pointer">
+                                <input type="radio" name="creccu-bank-choice" value="Transferencia Simplificada (UPAGO)" class="text-upago-blue">
+                                <i class="fa-solid fa-bolt text-upago-blue text-base"></i>
+                                <span class="font-bold text-upago-dark">Transferencia Simplificada (UPAGO)</span>
+                            </label>
+                        </div>
+
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="goToCreccuPayStep(1)" class="w-1/3 border border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl text-xs">Atrás</button>
+                            <button onclick="executeCreccuPaymentFinal()" class="w-2/3 bg-ccu-actionGreen text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md">Confirmar y Pagar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL SUSCRIPCIÓN PAC / PAT -->
+            <div id="modal-pac-subscription" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
+                <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate text-upago-blue text-base"></i>
+                            <h3 class="text-sm font-bold text-gray-800">Suscripción PAC / PAT — Cobro Automático</h3>
+                        </div>
+                        <button onclick="closePacSubscriptionModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        Mecanismo para asegurar el pago del cupo de crédito CreCCU en la fecha de vencimiento fija (<strong>los días 20 de cada mes calendario siguiente a la compra</strong>).
+                    </p>
+
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-gray-700 mb-1">Banco Emisor Cuenta Corriente:</label>
+                            <select class="w-full border border-gray-300 rounded-xl p-2.5 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-upago-blue font-medium">
+                                <option>Banco de Chile</option>
+                                <option>Santander</option>
+                                <option>BCI</option>
+                                <option>BancoEstado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-gray-700 mb-1">Número de Cuenta Corriente Persona/Empresa:</label>
+                            <input type="text" value="00-19283-09" class="w-full border border-gray-300 rounded-xl p-2.5 font-mono bg-white">
+                        </div>
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] flex items-start gap-2">
+                            <i class="fa-solid fa-circle-info mt-0.5 text-amber-600"></i>
+                            <span>El débito se ejecutará automáticamente el día 20 de cada mes por el saldo facturado vencido sin comisión manual.</span>
+                        </div>
+                    </div>
+
+                    <button onclick="confirmPacSubscription()" class="w-full bg-upago-blue hover:bg-upago-darkBlue text-white font-bold py-3.5 px-4 rounded-xl text-xs transition-all shadow-md">
+                        Autorizar Mandato PAC Día 20
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================================================================================= -->
+        <!-- MOCKUP 3: NOTIFICACIÓN EPV & LOGÍSTICA INVERSA (REAJUSTES EN RUTA & WALLET/PAYOUT) -->
+        <!-- ================================================================================= -->
+        <section id="view-epv" class="hidden space-y-6 fade-in max-w-3xl mx-auto">
+
+            <!-- BANNER DE INTEGRACIÓN TÉCNICA CON EPV CCU -->
+            <div class="bg-gradient-to-r from-upago-dark via-gray-900 to-upago-dark text-white p-5 rounded-2xl shadow-md border border-gray-800 space-y-2">
+                <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired text-amber-400 text-lg"></i>
+                        <h3 class="font-bold text-sm text-white">Integración Bidireccional API UPAGO $\leftrightarrow$ EPV CCU</h3>
+                    </div>
+                    <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono px-2 py-0.5 rounded font-bold">Sin cambio de Hardware</span>
+                </div>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    UPAGO se conecta con las máquinas portátiles existentes de los transportistas de CCU. Al entregar el pedido, cualquier reajuste por merma genera un <strong>Payout inmediato</strong> o abono en la <strong>Wallet del cliente</strong>, actualizando la deuda en SAP sin firmas ni aprobaciones manuales.
+                </p>
+            </div>
+
+            <!-- SIMULADOR DE ENTREGA EN RUTA & REAJUSTE -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 space-y-5">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <div>
+                        <span class="text-[10px] font-bold text-upago-blue uppercase tracking-wider block">Pedido N°S1552286 • Camión Ruta Talca</span>
+                        <h4 class="font-bold text-base text-gray-900 mt-0.5">Verificación de Entrega en Punto de Venta</h4>
+                    </div>
+                    <span id="epv-status-badge" class="bg-amber-100 text-amber-800 text-[11px] font-bold px-3 py-1 rounded-full">En Proceso de Recepción</span>
+                </div>
+
+                <!-- CONTROLES DE AJUSTE DE PRODUCTOS (MERMAS) -->
+                <p class="text-xs text-gray-600">Si el cliente rechaza cajas por mermas o quiebres de stock, ajusta las unidades recibidas:</p>
+
+                <div class="space-y-2.5 text-xs">
+                    <div class="p-3 bg-gray-50 rounded-xl border flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-gray-800 block">Royal Guard Golden 650cc (x12)</span>
+                            <span class="text-[10px] text-gray-500">Monto unitario paquete: $11.076</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="adjustEpvItem(-1)" class="w-8 h-8 bg-white border rounded-lg font-bold hover:bg-gray-100 text-sm">-</button>
+                            <span id="epv-qty" class="font-bold w-6 text-center text-sm">1</span>
+                            <button onclick="adjustEpvItem(1)" class="w-8 h-8 bg-white border rounded-lg font-bold hover:bg-gray-100 text-sm">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CÁLCULO DE REAJUSTE Y WALLET/PAYOUT -->
+                <div class="bg-ccu-mintBg p-4 rounded-2xl border border-ccu-teal/20 space-y-2 text-xs">
+                    <div class="flex justify-between text-gray-600"><span>Monto Original Facturado:</span><span class="font-bold font-mono">$11.076</span></div>
+                    <div class="flex justify-between text-ccu-discountRed font-bold"><span>Ajuste por Merma (Diferencia):</span><span id="epv-refund-amount" class="font-mono">-$0</span></div>
+                    <div class="flex justify-between items-baseline border-t border-ccu-teal/20 pt-2 font-bold text-sm text-gray-900">
+                        <span>Monto Corregido Efectivo:</span>
+                        <span id="epv-final-amount" class="text-xl text-ccu-teal font-black font-mono">$11.076</span>
+                    </div>
+                </div>
+
+                <!-- OPCIONES DE TRATAMIENTO DEL REAJUSTE -->
+                <div id="epv-treatment-options" class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-700">Destino del Saldo a Favor por Merma:</label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="border-2 border-upago-blue bg-upago-blue/5 p-3 rounded-xl flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="epv-refund-dest" value="wallet" checked class="text-upago-blue">
                             <div>
-                                <span class="text-[11px] font-bold tracking-wider uppercase text-ccu-teal bg-ccu-mintBg px-2 py-0.5 rounded border border-ccu-teal/20">Objetivo 2 — Brief 3.1</span>
-                                <h3 class="text-lg font-bold text-upago-dark mt-1">Pedido Activo N°S1552286</h3>
+                                <strong class="block text-upago-dark">Abonar a Wallet CreCCU</strong>
+                                <span class="text-[10px] text-gray-500">Saldo a favor automático en la línea</span>
                             </div>
-                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-1 rounded-full">Listo para Pago</span>
-                        </div>
-
-                        <!-- RESUMEN DE COMPRA EXTRAÍDO DE PANTALLA REAL CCU -->
-                        <div class="divide-y divide-gray-100 text-xs mb-4">
-                            <div class="py-2 flex justify-between">
-                                <span class="text-gray-600">CACHANTUN LIGHT GAS 1.6Lts (x6)</span>
-                                <span class="font-bold">$6.123</span>
+                        </label>
+                        <label class="border p-3 rounded-xl flex items-center gap-2 cursor-pointer hover:border-gray-300 bg-white">
+                            <input type="radio" name="epv-refund-dest" value="payout" class="text-upago-blue">
+                            <div>
+                                <strong class="block text-gray-800">Payout Directo (TEF)</strong>
+                                <span class="text-[10px] text-gray-500">Devolución inmediata a la cuenta</span>
                             </div>
-                            <div class="py-2 flex justify-between">
-                                <span class="text-gray-600">CACHANTUN CON GAS 2.5Lts (x6)</span>
-                                <span class="font-bold">$7.061</span>
-                            </div>
-                            <div class="py-2 flex justify-between">
-                                <span class="text-gray-600">KUNSTM GRAN TOROB VNR500X12 (x12)</span>
-                                <span class="font-bold">$29.543</span>
-                            </div>
-                            <div class="py-2 flex justify-between text-ccu-discountRed">
-                                <span>Descuentos x Volumen Aplicados</span>
-                                <span class="font-bold">-$31.578</span>
-                            </div>
-                            <div class="py-2 flex justify-between text-gray-500">
-                                <span>Flete / Envases / Impuestos I.A.B e IVA</span>
-                                <span>$86.963</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-ccu-mintBg p-4 rounded-xl border border-ccu-teal/10 mb-6">
-                            <div class="flex justify-between items-baseline">
-                                <span class="text-xs font-bold text-gray-700">TOTAL A PAGAR:</span>
-                                <span id="cart-total-display" class="text-xl font-extrabold text-ccu-teal">$98.112</span>
-                            </div>
-                        </div>
-
-                        <!-- SELECCIÓN DE MOMENTO DE PAGO (Brief 3.1) -->
-                        <div class="space-y-4">
-                            <label class="block text-xs font-bold text-gray-700">Momento de Pago:</label>
-                            
-                            <div class="grid grid-cols-2 gap-2">
-                                <button type="button" id="btn-pay-now" onclick="setPaymentMoment('now')" class="p-3 border-2 border-upago-blue bg-upago-blue/5 rounded-xl text-left transition-all">
-                                    <span class="text-xs font-bold block text-upago-blue"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Pago Anticipado</span>
-                                    <span class="text-[10px] text-gray-500 block mt-0.5">Despacho directo prioritario</span>
-                                </button>
-                                <button type="button" id="btn-pay-delivery" onclick="setPaymentMoment('delivery')" class="p-3 border border-gray-200 rounded-xl text-left hover:border-gray-300 transition-all">
-                                    <span class="text-xs font-bold block text-upago-dark"><i class="fa-solid fa-hand-holding-dollar text-ccu-actionGreen mr-1"></i> Contra Entrega</span>
-                                    <span class="text-[10px] text-gray-500 block mt-0.5">Pago digital en camión (EPV)</span>
-                                </button>
-                            </div>
-
-                            <!-- MÉTODOS DE PAGO DISPONIBLES EN CHECKOUT — visible solo si el momento es "Pago Anticipado" -->
-                            <div id="checkout-methods-container" class="space-y-2 pt-2">
-                                <span class="text-[11px] font-semibold text-gray-600 block">Medio de pago (Fase 1 licitación):</span>
-
-                                <div class="grid grid-cols-2 gap-2">
-                                    <label class="border border-upago-blue bg-upago-blue/5 p-3 rounded-xl flex items-center space-x-2 cursor-pointer">
-                                        <input type="radio" name="payment-method-checkout" value="ts" checked onchange="toggleCheckoutBankGrid(false)" class="text-upago-blue focus:ring-upago-blue">
-                                        <div>
-                                            <span class="text-xs font-bold block text-upago-dark">Transferencia Simplificada</span>
-                                            <span class="text-[10px] text-gray-500">Conciliación inmediata</span>
-                                        </div>
-                                    </label>
-                                    <label class="border border-gray-200 p-3 rounded-xl flex items-center space-x-2 cursor-pointer hover:border-gray-300">
-                                        <input type="radio" name="payment-method-checkout" value="bb" onchange="toggleCheckoutBankGrid(true)" class="text-upago-blue focus:ring-upago-blue">
-                                        <div>
-                                            <span class="text-xs font-bold block text-upago-dark">Botón Bancario</span>
-                                            <span class="text-[10px] text-gray-500">Portales bancarios directos</span>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div id="checkout-bank-grid" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-                                    <button type="button" onclick="selectCheckoutBank('Banco de Chile', this)" class="bank-choice-btn p-2.5 border border-gray-200 rounded-lg text-center hover:border-upago-blue transition-all bg-white">
-                                        <i class="fa-solid fa-building-columns text-upago-blue block mb-1"></i>
-                                        <span class="text-[10px] font-bold text-gray-700">Banco de Chile</span>
-                                    </button>
-                                    <button type="button" onclick="selectCheckoutBank('Santander', this)" class="bank-choice-btn p-2.5 border border-gray-200 rounded-lg text-center hover:border-upago-blue transition-all bg-white">
-                                        <i class="fa-solid fa-building-columns text-red-600 block mb-1"></i>
-                                        <span class="text-[10px] font-bold text-gray-700">Santander</span>
-                                    </button>
-                                    <button type="button" onclick="selectCheckoutBank('BCI', this)" class="bank-choice-btn p-2.5 border border-gray-200 rounded-lg text-center hover:border-upago-blue transition-all bg-white">
-                                        <i class="fa-solid fa-building-columns text-emerald-700 block mb-1"></i>
-                                        <span class="text-[10px] font-bold text-gray-700">BCI</span>
-                                    </button>
-                                    <button type="button" onclick="selectCheckoutBank('BancoEstado', this)" class="bank-choice-btn p-2.5 border border-gray-200 rounded-lg text-center hover:border-upago-blue transition-all bg-white">
-                                        <i class="fa-solid fa-building-columns text-orange-600 block mb-1"></i>
-                                        <span class="text-[10px] font-bold text-gray-700">BancoEstado</span>
-                                    </button>
-                                </div>
-                                <p id="checkout-bank-selected-label" class="hidden text-[11px] font-semibold text-upago-blue"></p>
-                            </div>
-
-                            <!-- Nota informativa — visible solo si el momento es "Contra Entrega" -->
-                            <div id="checkout-delivery-note" class="hidden bg-ccu-mintBg border border-ccu-teal/20 rounded-xl p-4 flex items-start gap-3">
-                                <i class="fa-solid fa-truck-fast text-ccu-teal mt-0.5"></i>
-                                <p class="text-[11px] text-gray-700">Este pedido se pagará digitalmente al momento de la entrega, directo en la Terminal EPV del transportista — sin conteo de efectivo ni validación manual. Cambia a la vista <strong>Transportista</strong> para ver ese flujo.</p>
-                            </div>
-
-                            <button id="btn-procesar-pedido" onclick="executeOrderPayment()" class="w-full bg-upago-blue hover:bg-upago-darkBlue text-white font-bold py-3 px-4 rounded-xl shadow-md text-sm flex items-center justify-center gap-2 transition-all">
-                                <i class="fa-solid fa-shield-check"></i>
-                                <span>Procesar Pago Digital de Pedido</span>
-                            </button>
-
-                            <!-- Estado de rechazo inline -->
-                            <div id="checkout-error-inline" class="hidden bg-red-50 border border-red-200 rounded-xl p-3.5 space-y-2">
-                                <div class="flex items-center gap-2 text-red-600 font-bold text-xs"><i class="fa-solid fa-triangle-exclamation"></i>Pago rechazado — fondos insuficientes</div>
-                                <p class="text-[11px] text-red-500">El banco de origen rechazó la transacción. Reintenta con el mismo medio u otro, sin perder tu pedido.</p>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button onclick="executeOrderPayment()" class="bg-upago-blue hover:bg-upago-blue/90 text-white font-bold py-2 rounded-lg text-[11px] flex items-center justify-center gap-1.5"><i class="fa-solid fa-rotate-right"></i>Reintentar</button>
-                                    <button onclick="document.getElementById('checkout-error-inline').classList.add('hidden')" class="border border-gray-200 hover:bg-gray-50 text-gray-500 font-bold py-2 rounded-lg text-[11px]">Elegir otro medio</button>
-                                </div>
-                            </div>
-                        </div>
+                        </label>
                     </div>
                 </div>
 
-            </div>
-        </section>
-
-        <!-- ================================================================================= -->
-        <!-- VISTA 2: TRANSPORTISTA EN TERRENO / TERMINAL EPV (Brief 3.3 y 3.5) -->
-        <!-- ================================================================================= -->
-        <section id="view-driver" class="hidden space-y-6 fade-in max-w-2xl mx-auto">
-            
-            <!-- ENCABEZADO TERMINAL MÓVIL EPV -->
-            <div class="bg-upago-dark text-white p-4 rounded-2xl shadow-lg border border-gray-800">
-                <div class="flex justify-between items-center pb-3 border-b border-gray-700">
-                    <div class="flex items-center space-x-2">
-                        <span class="bg-ccu-actionGreen w-3 h-3 rounded-full inline-block animate-pulse"></span>
-                        <span class="font-mono text-xs text-gray-300">EPV TERRENO #402 — CAMIÓN RUTA TALCA</span>
-                    </div>
-                    <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded font-mono">GPS: EN RUTA</span>
-                </div>
-                
-                <div class="pt-3 flex justify-between items-end">
-                    <div>
-                        <span class="text-[10px] text-gray-400 block uppercase">Siguiente Entrega</span>
-                        <h2 class="text-base font-bold text-white">BOTILLERIAS CLEBER SPA</h2>
-                        <p class="text-xs text-gray-400">Pedido N°S1552286 • Los Militares 6050</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-[10px] text-gray-400 block">ESTADO PAGO</span>
-                        <span id="driver-payment-status-badge" class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-bold px-2.5 py-1 rounded-full inline-block">
-                            Pendiente Contra Entrega
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- BRIEF 3.5: GESTIÓN DE AJUSTES Y DEVOLUCIONES PARCIALES EN RUTA (MERMAS) -->
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <span class="text-[11px] font-bold text-upago-blue bg-upago-blue/10 px-2 py-0.5 rounded">Brief 3.5: Logística Inversa EPV</span>
-                        <h3 class="text-base font-bold text-upago-dark mt-1">Verificación y Ajuste de Carga en Recepción</h3>
-                    </div>
-                    <span class="text-xs text-gray-500">Sincronización SAP en tiempo real</span>
-                </div>
-
-                <p class="text-xs text-gray-600 mb-4">Si el cliente rechaza productos por merma, quiebre o error de empaque, ajusta las cantidades antes de registrar el cobro digital:</p>
-
-                <!-- LISTA DE PRODUCTOS CON CONTROLES DE AJUSTE -->
-                <div class="space-y-3 mb-6">
-                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 flex justify-between items-center text-xs">
-                        <div>
-                            <span class="font-bold text-gray-800 block">Cachantun Light Gas 1.6L (x6)</span>
-                            <span class="text-[11px] text-gray-500">Precio unitario paquete: $6.123</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="adjustDriverItem('cach16', -1)" class="w-7 h-7 bg-white border rounded-lg flex items-center justify-center text-gray-700 font-bold hover:bg-gray-100">-</button>
-                            <span id="driver-qty-cach16" class="font-bold w-6 text-center">1</span>
-                            <button onclick="adjustDriverItem('cach16', 1)" class="w-7 h-7 bg-white border rounded-lg flex items-center justify-center text-gray-700 font-bold hover:bg-gray-100">+</button>
-                        </div>
-                    </div>
-
-                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 flex justify-between items-center text-xs">
-                        <div>
-                            <span class="font-bold text-gray-800 block">Cachantun Con Gas 2.5L (x6)</span>
-                            <span class="text-[11px] text-gray-500">Precio unitario paquete: $7.061</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="adjustDriverItem('cach25', -1)" class="w-7 h-7 bg-white border rounded-lg flex items-center justify-center text-gray-700 font-bold hover:bg-gray-100">-</button>
-                            <span id="driver-qty-cach25" class="font-bold w-6 text-center">1</span>
-                            <button onclick="adjustDriverItem('cach25', 1)" class="w-7 h-7 bg-white border rounded-lg flex items-center justify-center text-gray-700 font-bold hover:bg-gray-100">+</button>
-                        </div>
-                    </div>
-
-                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 flex justify-between items-center text-xs">
-                        <div>
-                            <span class="font-bold text-gray-800 block">Kunstmann Gran Torob (x12)</span>
-                            <span class="text-[11px] text-gray-500">Precio unitario paquete: $29.543</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="adjustDriverItem('kunst', -1)" class="w-7 h-7 bg-white border rounded-lg flex items-center justify-center text-gray-700 font-bold hover:bg-gray-100">-</button>
-                            <span id="driver-qty-kunst" class="font-bold w-6 text-center">1</span>
-                            <button onclick="adjustDriverItem('kunst', 1)" class="w-7 h-7 bg-white border rounded-lg flex items-center justify-center text-gray-700 font-bold hover:bg-gray-100">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CÁLCULO REAJUSTADO Y DESGLOSE -->
-                <div class="border-t pt-4 space-y-2">
-                    <div class="flex justify-between text-xs text-gray-600">
-                        <span>Valor Original Facturado:</span>
-                        <span class="line-through">$98.112</span>
-                    </div>
-                    <div class="flex justify-between text-xs text-ccu-discountRed">
-                        <span>Ajuste por Mermas / Devolución Parcial (Payout):</span>
-                        <span id="driver-refund-amount" class="font-bold">-$0</span>
-                    </div>
-                    <div class="flex justify-between items-baseline pt-2 border-t">
-                        <span class="text-sm font-bold text-gray-800">Monto Recalculado a Cobrar:</span>
-                        <span id="driver-final-total" class="text-2xl font-black text-ccu-teal">$98.112</span>
-                    </div>
-                </div>
-
-                <!-- ACCIONES DEL TRANSPORTISTA -->
-                <div id="driver-actions" class="mt-6 space-y-3">
-                    <button onclick="generateDriverQR()" class="w-full bg-ccu-actionGreen hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow flex items-center justify-center gap-2 text-sm transition-all">
-                        <i class="fa-solid fa-qrcode text-lg"></i>
-                        <span>Generar Cobro QR / Link en Pantalla EPV</span>
-                    </button>
-                    
-                    <button onclick="simulateEPVPaySuccess()" class="w-full bg-upago-dark hover:bg-black text-white font-medium py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-circle-check text-upago-lightGreen"></i>
-                        <span>Simular Confirmación de Pago por el Cliente</span>
-                    </button>
-                </div>
-
-                <!-- CIERRE FORMAL DE ENTREGA (aparece tras confirmar el pago) -->
-                <div id="driver-closure" class="hidden mt-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center space-y-3 fade-in">
-                    <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mx-auto"><i class="fa-solid fa-circle-check"></i></div>
-                    <p class="text-sm font-bold text-gray-800">Entrega #402 lista para cerrar</p>
-                    <p class="text-xs text-gray-600">Pago confirmado y conciliado. El ERP de CCU ya refleja el estado de cuenta actualizado del cliente.</p>
-                    <button onclick="closeDelivery()" class="w-full bg-upago-blue hover:bg-upago-darkBlue text-white font-bold py-3 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-flag-checkered"></i> Cerrar Entrega y Continuar Ruta
-                    </button>
-                </div>
-            </div>
-
-            <!-- MODAL SIMULADO DE QR / DISPERSIÓN EN PANTALLA MÓVIL -->
-            <div id="driver-qr-modal" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-4 fade-in">
-                <span class="bg-emerald-200 text-emerald-900 text-xs font-bold px-3 py-1 rounded-full">QR Dinámico Generado</span>
-                <h4 class="text-sm font-bold text-gray-800">Escanea para pagar el monto reajustado</h4>
-                
-                <div class="bg-white p-4 rounded-xl inline-block shadow-inner border border-gray-200">
-                    <i class="fa-solid fa-qrcode text-8xl text-upago-dark"></i>
-                </div>
-
-                <div class="text-xs text-gray-600">
-                    <span>Monto Reajustado: <strong id="qr-modal-amount" class="text-ccu-teal font-extrabold text-base">$98.112</strong></span>
-                    <p class="text-[10px] text-gray-500 mt-1">Sincronización simultánea enviada al ERP SAP de CCU</p>
-                </div>
+                <button onclick="executeEpvSync()" class="w-full bg-ccu-actionGreen hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl text-xs shadow-md flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Notificar EPV y Sincronizar Reajuste con SAP ERP</span>
+                </button>
             </div>
 
         </section>
 
         <!-- ================================================================================= -->
-        <!-- VISTA 3: BACKOFFICE / DASHBOARD & ANALYTICS (Brief 3.4) -->
+        <!-- MOCKUP 4: BACKOFFICE & CONCILIACIÓN AUTOMÁTICA SAP (Brief 3.4) -->
         <!-- ================================================================================= -->
         <section id="view-backoffice" class="hidden space-y-6 fade-in">
             
-            <!-- HEADER KPI PANEL -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div>
-                    <span class="text-[11px] font-bold text-upago-blue bg-upago-blue/10 px-2 py-0.5 rounded">Brief 3.4: Control & Métricas</span>
+                    <span class="text-[10px] font-bold text-upago-blue bg-upago-blue/10 px-2 py-0.5 rounded">Brief 3.4: Control &amp; Métricas</span>
                     <h2 class="text-xl font-bold text-upago-dark mt-1">Panel de Trazabilidad y Adopción Digital CCU</h2>
                     <p class="text-xs text-gray-500">Métricas en tiempo real de los centros de distribución piloto (Modelo y Talca)</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-gray-600">Periodo Piloto:</span>
-                    <select class="text-xs border border-gray-300 rounded-lg p-2 font-medium bg-white focus:outline-none">
-                        <option>Últimos 30 días (Fase 1 Piloto)</option>
-                        <option>Centro Distribución Talca</option>
-                        <option>Centro Distribución Modelo</option>
-                    </select>
-                </div>
+                <button onclick="showToast('Exportación SAP', 'Generando archivo de cuadratura masiva .CSV para SAP...', 'fa-file-excel', 'green')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-download"></i> Exportar Cuadratura SAP (.CSV)
+                </button>
             </div>
 
-            <!-- TARJETAS DE INDICADORES CLAVE (KPIs EXIGIDOS EN BRIEF 3.4) -->
+            <!-- KPIS DE LA LICITACIÓN -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                <!-- KPI 1: Tasa de Adopción -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs font-bold text-gray-500 uppercase">Tasa de Adopción Digital</span>
-                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i class="fa-solid fa-chart-line"></i></div>
-                    </div>
-                    <div class="mt-4">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Tasa Adopción Digital</span>
+                    <div class="mt-3">
                         <span class="text-2xl font-black text-upago-dark">78.4%</span>
-                        <span class="text-xs text-emerald-600 font-bold ml-2"><i class="fa-solid fa-arrow-up"></i> +24% vs meta</span>
-                        <p class="text-[10px] text-gray-400 mt-1">Meta piloto: &gt; 50% de clientes B2B</p>
+                        <span class="text-xs text-emerald-600 font-bold ml-2"><i class="fa-solid fa-arrow-up"></i> +28.4%</span>
                     </div>
                 </div>
 
-                <!-- KPI 2: Transacciones Aprobadas vs Rechazadas -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs font-bold text-gray-500 uppercase">Tasa de Aprobación</span>
-                        <div class="p-2 bg-upago-blue/10 text-upago-blue rounded-lg"><i class="fa-solid fa-circle-check"></i></div>
-                    </div>
-                    <div class="mt-4">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Tasa de Aprobación</span>
+                    <div class="mt-3">
                         <span class="text-2xl font-black text-upago-dark">98.2%</span>
                         <span class="text-xs text-gray-500 ml-2">1.8% Rechazos</span>
-                        <p class="text-[10px] text-gray-400 mt-1">Resolución instantánea de errores</p>
                     </div>
                 </div>
 
-                <!-- KPI 3: Tiempo Promedio de Pago -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs font-bold text-gray-500 uppercase">Tiempo Promedio Pago</span>
-                        <div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-stopwatch"></i></div>
-                    </div>
-                    <div class="mt-4">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Tiempo Promedio Pago</span>
+                    <div class="mt-3">
                         <span class="text-2xl font-black text-upago-dark">42 seg</span>
                         <span class="text-xs text-emerald-600 font-bold ml-2">-11 min vs efectivo</span>
-                        <p class="text-[10px] text-gray-400 mt-1">Eficiencia crítica en última milla</p>
                     </div>
                 </div>
 
-                <!-- KPI 4: Ticket Promedio Digital vs Físico -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs font-bold text-gray-500 uppercase">Ticket Prom. Digital</span>
-                        <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-receipt"></i></div>
-                    </div>
-                    <div class="mt-4">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Ticket Promedio Digital</span>
+                    <div class="mt-3">
                         <span class="text-2xl font-black text-upago-dark">$142.500</span>
-                        <span class="text-xs text-purple-600 font-bold ml-2">vs $85.00 Físico</span>
-                        <p class="text-[10px] text-gray-400 mt-1">+67% mayor volumen de compra</p>
+                        <span class="text-xs text-purple-600 font-bold ml-2">vs $85.000 Físico</span>
                     </div>
                 </div>
-
             </div>
 
-            <!-- TABLA DE AUDITORÍA Y TRAZABILIDAD TRANSACCIONAL EN TIEMPO REAL -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+            <!-- TABLA DE TRAZABILIDAD SCROLLABLE -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                <div class="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <div>
-                        <h3 class="text-sm font-bold text-upago-dark">Trazabilidad de Transacciones en Tiempo Real</h3>
-                        <p class="text-xs text-gray-500">Conciliación automatizada con cuadraturas SAP ERP</p>
+                        <h3 class="text-sm font-bold text-upago-dark">Cuadratura y Webhooks Transaccionales</h3>
+                        <p class="text-xs text-gray-500">Conciliación automática enviada al Backoffice de CCU (Integración API SAP)</p>
                     </div>
-                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1 transition-all">
-                        <i class="fa-solid fa-download"></i> Exportar Reporte (.CSV)
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <span id="audit-count-badge" class="bg-ccu-mintBg text-ccu-teal border border-ccu-teal/20 text-[11px] font-bold px-3 py-1 rounded-full font-mono">
+                            <i class="fa-solid fa-list-check mr-1"></i><span id="tx-count-number">12</span> Registros (Modo Scroll)
+                        </span>
+                    </div>
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto overflow-y-auto max-h-[440px] custom-scrollbar border-t border-gray-100 relative">
                     <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-500 uppercase text-[10px] tracking-wider border-b border-gray-100">
-                                <th class="p-4">ID / Transacción</th>
-                                <th class="p-4">Cliente / RUT</th>
-                                <th class="p-4">Tipo</th>
-                                <th class="p-4">Medio de Pago</th>
-                                <th class="p-4">Monto</th>
-                                <th class="p-4">Estado SAP</th>
-                                <th class="p-4">Acción</th>
+                        <thead class="sticky top-0 z-10 bg-gray-50 shadow-sm">
+                            <tr class="text-gray-500 uppercase text-[10px] tracking-wider border-b border-gray-200">
+                                <th class="p-3.5 bg-gray-50">ID Transacción</th>
+                                <th class="p-3.5 bg-gray-50">Cliente / RUT</th>
+                                <th class="p-3.5 bg-gray-50">Tipo Operación</th>
+                                <th class="p-3.5 bg-gray-50">Medio de Pago</th>
+                                <th class="p-3.5 bg-gray-50">Monto</th>
+                                <th class="p-3.5 bg-gray-50">Estado SAP</th>
+                                <th class="p-3.5 bg-gray-50 text-center">Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="audit-table-body" class="divide-y divide-gray-100 text-gray-700">
-                            <!-- Fila de Ejemplo 1 -->
+                        <tbody id="audit-table-body" class="divide-y divide-gray-100 text-gray-700 bg-white">
                             <tr class="hover:bg-gray-50/80 transition-all">
-                                <td class="p-4 font-mono font-bold text-upago-blue">#TX-994821</td>
-                                <td class="p-4">
-                                    <span class="font-bold block text-gray-800">BOTILLERIAS CLEBER SPA</span>
-                                    <span class="text-[10px] text-gray-400">RUT: 76.452.110-K</span>
-                                </td>
-                                <td class="p-4"><span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded font-semibold">Abono CreCCU</span></td>
-                                <td class="p-4 font-medium">Transferencia Simplificada</td>
-                                <td class="p-4 font-bold text-gray-900">$1.000.000</td>
-                                <td class="p-4"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
-                                <td class="p-4 text-gray-400 hover:text-upago-blue cursor-pointer"><i class="fa-solid fa-eye"></i> Audit</td>
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994821</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">BOTILLERIAS CLEBER SPA</span><span class="text-[10px] text-gray-400">RUT: 76.452.110-K</span></td>
+                                <td class="p-3.5"><span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded font-semibold">Abono CreCCU</span></td>
+                                <td class="p-3.5 font-medium">Transferencia Simplificada</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$922.122</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994821', 'Abono CreCCU', 'Transferencia Simplificada', 922122)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
                             </tr>
-                            <!-- Fila de Ejemplo 2 -->
                             <tr class="hover:bg-gray-50/80 transition-all">
-                                <td class="p-4 font-mono font-bold text-upago-blue">#TX-994820</td>
-                                <td class="p-4">
-                                    <span class="font-bold block text-gray-800">DISTRIBUIDORA TALCA EIRL</span>
-                                    <span class="text-[10px] text-gray-400">RUT: 77.102.390-5</span>
-                                </td>
-                                <td class="p-4"><span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-semibold">Pedido In-App</span></td>
-                                <td class="p-4 font-medium">Botón Bancario (BancoChile)</td>
-                                <td class="p-4 font-bold text-gray-900">$245.800</td>
-                                <td class="p-4"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
-                                <td class="p-4 text-gray-400 hover:text-upago-blue cursor-pointer"><i class="fa-solid fa-eye"></i> Audit</td>
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994820</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">DISTRIBUIDORA TALCA EIRL</span><span class="text-[10px] text-gray-400">RUT: 77.102.390-5</span></td>
+                                <td class="p-3.5"><span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-semibold">Pedido miCarro</span></td>
+                                <td class="p-3.5 font-medium">Crédito CRECCU</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$11.076</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994820', 'Pedido miCarro', 'Crédito CRECCU', 11076)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994819</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">BOTILLERIAS CLEBER SPA</span><span class="text-[10px] text-gray-400">RUT: 76.452.110-K</span></td>
+                                <td class="p-3.5"><span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded font-semibold">Reajuste EPV</span></td>
+                                <td class="p-3.5 font-medium">Wallet CreCCU (Merma)</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$5.954</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994819', 'Reajuste EPV', 'Wallet CreCCU (Merma)', 5954)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994818</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">COMERCIAL EL MODELO SPA</span><span class="text-[10px] text-gray-400">RUT: 76.992.401-2</span></td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-semibold">Mandato PAC Día 20</span></td>
+                                <td class="p-3.5 font-medium">Débito Automático BancoChile</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$420.000</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994818', 'Mandato PAC Día 20', 'Débito Automático BancoChile', 420000)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994817</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">ALMACÉN DON ROBERTO</span><span class="text-[10px] text-gray-400">RUT: 12.842.190-3</span></td>
+                                <td class="p-3.5"><span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded font-semibold">Abono CreCCU</span></td>
+                                <td class="p-3.5 font-medium">Botón Bancario (Santander)</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$150.000</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994817', 'Abono CreCCU', 'Botón Bancario (Santander)', 150000)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994816</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">SUPERMERCADO LA ESQUINA</span><span class="text-[10px] text-gray-400">RUT: 76.129.800-4</span></td>
+                                <td class="p-3.5"><span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-semibold">Pedido miCarro</span></td>
+                                <td class="p-3.5 font-medium">Transferencia Simplificada</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$88.450</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994816', 'Pedido miCarro', 'Transferencia Simplificada', 88450)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994815</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">DISTRIBUIDORA TALCA EIRL</span><span class="text-[10px] text-gray-400">RUT: 77.102.390-5</span></td>
+                                <td class="p-3.5"><span class="bg-rose-100 text-rose-800 text-[10px] px-2 py-0.5 rounded font-semibold">Payout TEF (Devolución)</span></td>
+                                <td class="p-3.5 font-medium">Dispersión Automática UPAGO</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$12.500</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994815', 'Payout TEF (Devolución)', 'Dispersión Automática UPAGO', 12500)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994814</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">BOTILLERIAS CLEBER SPA</span><span class="text-[10px] text-gray-400">RUT: 76.452.110-K</span></td>
+                                <td class="p-3.5"><span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded font-semibold">Abono CreCCU</span></td>
+                                <td class="p-3.5 font-medium">Botón Bancario (BCI)</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$200.000</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994814', 'Abono CreCCU', 'Botón Bancario (BCI)', 200000)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994813</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">MINIMARKET SAN JOSE</span><span class="text-[10px] text-gray-400">RUT: 76.881.002-1</span></td>
+                                <td class="p-3.5"><span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-semibold">Pedido miCarro</span></td>
+                                <td class="p-3.5 font-medium">Contado (Contra Entrega EPV)</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$64.200</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994813', 'Pedido miCarro', 'Contado (Contra Entrega EPV)', 64200)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994812</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">COMERCIAL MAIPO LIMITADA</span><span class="text-[10px] text-gray-400">RUT: 77.012.880-K</span></td>
+                                <td class="p-3.5"><span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded font-semibold">Abono CreCCU</span></td>
+                                <td class="p-3.5 font-medium">Transferencia Simplificada</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$500.000</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994812', 'Abono CreCCU', 'Transferencia Simplificada', 500000)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994811</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">BOTILLERIA CENTRAL TALCA</span><span class="text-[10px] text-gray-400">RUT: 76.223.109-8</span></td>
+                                <td class="p-3.5"><span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded font-semibold">Reajuste EPV</span></td>
+                                <td class="p-3.5 font-medium">Wallet CreCCU (Merma)</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$11.076</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994811', 'Reajuste EPV', 'Wallet CreCCU (Merma)', 11076)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/80 transition-all">
+                                <td class="p-3.5 font-mono font-bold text-upago-blue">#TX-994810</td>
+                                <td class="p-3.5"><span class="font-bold block text-gray-800">DISTRIBUIDORA MODELO S.A.</span><span class="text-[10px] text-gray-400">RUT: 76.001.229-0</span></td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-semibold">Mandato PAC Día 20</span></td>
+                                <td class="p-3.5 font-medium">Débito Automático Santander</td>
+                                <td class="p-3.5 font-bold text-gray-900 font-mono">$310.000</td>
+                                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                                <td class="p-3.5 text-center"><button onclick="openAuditModal('#TX-994810', 'Mandato PAC Día 20', 'Débito Automático Santander', 310000)" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all"><i class="fa-solid fa-code"></i> Auditar Webhook</button></td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- FOOTER DE TABLA -->
+                <div class="p-3 bg-gray-50 border-t text-[11px] text-gray-500 flex justify-between items-center px-5 font-medium">
+                    <span><i class="fa-solid fa-arrows-up-down mr-1"></i>Usa el scroll para revisar movimientos anteriores</span>
+                    <span class="font-mono">Paginación automática SAP ERP</span>
                 </div>
             </div>
 
@@ -723,84 +856,91 @@
     <footer class="bg-upago-dark text-gray-400 py-6 px-4 text-xs border-t border-gray-800 mt-auto">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
             <div>
-                <span class="text-white font-bold tracking-wider">UPAGO Revenue Assurance & Payments</span>
+                <span class="text-white font-bold tracking-wider">UPAGO Revenue Assurance &amp; Payments</span>
                 <p class="text-[11px] text-gray-500 mt-0.5">Propuesta técnica-comercial para Licitación Medios de Pago Digitales B2B CCU.</p>
             </div>
             <div class="flex items-center space-x-4 text-[11px]">
-                <span class="hover:text-white cursor-pointer"><i class="fa-solid fa-lock text-emerald-500"></i> ISO 27001 / SGSI</span>
+                <span><i class="fa-solid fa-lock text-emerald-500 mr-1"></i> PCI-DSS / SGSI</span>
                 <span>•</span>
-                <span class="hover:text-white cursor-pointer">SLA Uptime 99.99%</span>
+                <span>Uptime 99.99%</span>
                 <span>•</span>
-                <span class="text-upago-lightGreen">Entorno Piloto Activo</span>
+                <span class="text-upago-lightGreen">Piloto Modelo &amp; Talca</span>
             </div>
         </div>
     </footer>
 
-    <!-- MODAL DE REDIRECCIÓN BANCARIA SIMULADA (profundidad del journey — Botón Bancario) -->
-    <div id="bank-redirect-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-8 text-center space-y-4 shadow-2xl">
-            <div id="bank-redirect-spinner" class="spinner mx-auto"></div>
-            <div id="bank-redirect-check" class="hidden w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mx-auto"><i class="fa-solid fa-check"></i></div>
-            <p id="bank-redirect-bankname" class="text-sm font-bold text-gray-800">Banco de Chile</p>
-            <p id="bank-redirect-status" class="text-xs text-gray-500">Redirigiendo a portal bancario seguro...</p>
-            <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                <div id="bank-redirect-progress" class="bg-upago-blue h-full transition-all duration-700" style="width:10%"></div>
+    <!-- MODAL CONFIRMACIÓN ELIMINAR PRODUCTO / VACIAR CARRO -->
+    <div id="modal-confirm-delete" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border border-gray-100">
+            <div class="w-12 h-12 bg-red-100 text-ccu-discountRed rounded-full flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-trash-can"></i>
             </div>
-            <p class="text-[10px] text-gray-400">Conexión cifrada — no se almacenan credenciales bancarias en UPAGO</p>
+            <h3 class="text-base font-bold text-gray-800">¿Deseas eliminar el producto?</h3>
+            <p class="text-xs text-gray-600 leading-relaxed">
+                Si reduces la cantidad a 0, se removerá <strong class="text-gray-800">ROYAL GUARD GOLDEN 650cc</strong> y tu carrito de compras quedará vacío.
+            </p>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeConfirmDeleteModal()" class="w-1/2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-2.5 px-3 rounded-xl text-xs transition-all">
+                    Cancelar
+                </button>
+                <button onclick="confirmDeleteMicarroItem()" class="w-1/2 bg-ccu-discountRed hover:bg-red-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow transition-all">
+                    Sí, vaciar carro
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- CONTENEDOR DE TOASTS (reemplaza alert() nativos por notificaciones on-brand) -->
-    <div id="toast-container"></div>
-
-    <!-- MODAL GLOBAL DE CONFIRMACIÓN NOTIFICACIÓN / LIBERACIÓN DE CUPO -->
-    <div id="modal-success" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl border border-gray-100">
-            <div class="w-16 h-16 bg-emerald-100 text-ccu-actionGreen rounded-full flex items-center justify-center text-2xl mx-auto pulse-live">
-                <i class="fa-solid fa-check-double"></i>
-            </div>
-            <h3 id="modal-title" class="text-lg font-bold text-upago-dark">¡Operación Aprobada con Éxito!</h3>
-            <p id="modal-body" class="text-xs text-gray-600 leading-relaxed">Se ha procesado el pago y notificado al sistema ERP de CCU vía Webhook.</p>
-            
-            <div id="modal-receipt-box" class="bg-ccu-mintBg p-3 rounded-xl text-left text-xs space-y-1 font-mono border border-ccu-teal/10">
-                <div class="flex justify-between"><span>Transacción:</span><strong id="modal-tx-id">#TX-109283</strong></div>
-                <div class="flex justify-between"><span>Liberación Cupo CreCCU:</span><strong id="modal-cupo-freed" class="text-upago-green">+$1.000.000</strong></div>
-                <div class="flex justify-between"><span>Tiempo Respuesta API:</span><strong class="text-gray-700">1.2 segs</strong></div>
+    <!-- MODAL DE AUDITORÍA DE WEBHOOK -->
+    <div id="modal-audit-detail" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 text-left space-y-4 shadow-2xl border border-gray-100">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-code text-upago-blue text-base"></i>
+                    <span id="audit-modal-tx" class="text-xs font-bold font-mono text-gray-800">Auditoría #TX-994821</span>
+                </div>
+                <button onclick="closeAuditModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <button onclick="closeSuccessModal()" class="w-full bg-upago-blue hover:bg-upago-darkBlue text-white font-bold py-3 px-4 rounded-xl text-xs transition-all">
-                Entendido / Volver
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="p-2 bg-gray-50 rounded-lg"><span class="text-gray-400 block text-[9px]">SISTEMA DESTINO:</span><strong class="text-gray-800">SAP ERP CCU</strong></div>
+                    <div class="p-2 bg-gray-50 rounded-lg"><span class="text-gray-400 block text-[9px]">LATENCIA API:</span><strong class="text-emerald-600">1.1 segundos</strong></div>
+                </div>
+
+                <label class="block text-xs font-bold text-gray-700">Payload Webhook Emitido a SAP (JSON):</label>
+                <pre id="audit-json-code" class="bg-gray-900 text-emerald-400 p-3.5 rounded-xl text-[10px] font-mono overflow-x-auto border border-gray-800 leading-relaxed"></pre>
+            </div>
+
+            <button onclick="closeAuditModal()" class="w-full bg-upago-dark text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all">
+                Cerrar Ventana de Auditoría
             </button>
         </div>
     </div>
 
-    <!-- LOGIC/JAVASCRIPT DEL PROTOTIPO INTEGRADO -->
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- LOGIC / JAVASCRIPT INTEGRADO -->
     <script>
-        // ==========================================
-        // ESTADO GLOBAL DE LA DEMOSTRACIÓN (IN-MEMORY)
-        // ==========================================
-        let currentCreditLimit = 2500000;
-        let currentDebt = 1800000;
-        let isErrorSimActive = false;
-        let creccuSelectedBank = null;
-        let checkoutSelectedBank = null;
+        // ESTADO EN MEMORIA DEL PROTOTIPO
+        let creccuUsed = 233887;
+        let creccuTotal = 800000;
+        let epvQty = 1;
+        let totalTxCount = 12;
+        const itemUnitPrice = 11076;
 
-        // Precios unitarios de items para transportista
-        const itemPrices = {
-            cach16: 6123,
-            cach25: 7061,
-            kunst: 29543
-        };
-        
-        let driverQuantities = {
-            cach16: 1,
-            cach25: 1,
-            kunst: 1
+        // ESTADO MICARRO CCU
+        let micarroQty = 1;
+        const micarroValues = {
+            unitPrice: 11076,
+            subtotal: 9845,
+            discount: 3429,
+            iva: 1558,
+            iab: 1315,
+            flete: 1786
         };
 
-        // ==========================================
-        // TOASTS (reemplazan alert() nativos por notificaciones on-brand)
-        // ==========================================
+        // TOASTS ON-BRAND
         function showToast(title, msg, icon, tone) {
             tone = tone || 'blue';
             const colors = {
@@ -814,253 +954,27 @@
                 <div class="flex-1"><p class="text-xs font-bold text-gray-800">${title}</p><p class="text-[11px] text-gray-500 mt-0.5">${msg}</p></div>
                 <button onclick="this.closest('.toast').remove()" class="text-gray-300 hover:text-gray-500"><i class="fa-solid fa-xmark text-xs"></i></button>`;
             document.getElementById('toast-container').appendChild(el);
-            setTimeout(() => el.remove(), 6000);
+            setTimeout(() => el.remove(), 5000);
         }
 
-        // ==========================================
-        // REDIRECCIÓN BANCARIA SIMULADA (Botones Bancarios — profundidad del journey)
-        // ==========================================
-        let bankRedirectCallback = null;
-        function openBankRedirect(bankName, onDone) {
-            bankRedirectCallback = onDone;
-            document.getElementById('bank-redirect-bankname').innerText = bankName;
-            document.getElementById('bank-redirect-status').innerText = 'Redirigiendo a portal bancario seguro...';
-            document.getElementById('bank-redirect-spinner').classList.remove('hidden');
-            document.getElementById('bank-redirect-check').classList.add('hidden');
-            document.getElementById('bank-redirect-progress').style.width = '15%';
-            document.getElementById('bank-redirect-modal').classList.remove('hidden');
-
-            setTimeout(() => {
-                document.getElementById('bank-redirect-status').innerText = 'Validando credenciales y autorizando cargo...';
-                document.getElementById('bank-redirect-progress').style.width = '65%';
-            }, 900);
-
-            setTimeout(() => {
-                document.getElementById('bank-redirect-spinner').classList.add('hidden');
-                document.getElementById('bank-redirect-check').classList.remove('hidden');
-                document.getElementById('bank-redirect-status').innerText = 'Autorizado por ' + bankName;
-                document.getElementById('bank-redirect-progress').style.width = '100%';
-            }, 1900);
-
-            setTimeout(() => {
-                document.getElementById('bank-redirect-modal').classList.add('hidden');
-                if (bankRedirectCallback) bankRedirectCallback(bankName);
-            }, 2500);
-        }
-
-        // ==========================================
-        // SELECTORES DE BANCO — CreCCU
-        // ==========================================
-        function toggleCreccuBankGrid(show) {
-            document.getElementById('creccu-bank-grid').classList.toggle('hidden', !show);
-            if (!show) { creccuSelectedBank = null; document.getElementById('creccu-bank-selected-label').classList.add('hidden'); }
-        }
-        function selectCreccuBank(bank, btn) {
-            creccuSelectedBank = bank;
-            document.querySelectorAll('#creccu-bank-grid .bank-choice-btn').forEach(b => b.classList.remove('border-upago-blue', 'bg-upago-blue/5', 'ring-1', 'ring-upago-blue'));
-            btn.classList.add('border-upago-blue', 'bg-upago-blue/5', 'ring-1', 'ring-upago-blue');
-            const label = document.getElementById('creccu-bank-selected-label');
-            label.innerText = 'Seleccionado: ' + bank;
-            label.classList.remove('hidden');
-        }
-
-        // ==========================================
-        // SELECTORES DE BANCO — Checkout de Pedidos
-        // ==========================================
-        function toggleCheckoutBankGrid(show) {
-            document.getElementById('checkout-bank-grid').classList.toggle('hidden', !show);
-            if (!show) { checkoutSelectedBank = null; document.getElementById('checkout-bank-selected-label').classList.add('hidden'); }
-        }
-        function selectCheckoutBank(bank, btn) {
-            checkoutSelectedBank = bank;
-            document.querySelectorAll('#checkout-bank-grid .bank-choice-btn').forEach(b => b.classList.remove('border-upago-blue', 'bg-upago-blue/5', 'ring-1', 'ring-upago-blue'));
-            btn.classList.add('border-upago-blue', 'bg-upago-blue/5', 'ring-1', 'ring-upago-blue');
-            const label = document.getElementById('checkout-bank-selected-label');
-            label.innerText = 'Seleccionado: ' + bank;
-            label.classList.remove('hidden');
-        }
-
-        // BRIEF 3.2: Actualizador dinámico del cupo de crédito
-        function setAbonoAmount(amount) {
-            document.getElementById('input-abono-monto').value = amount;
-        }
-
-        // BRIEF 3.2: Ejecución simulada de abono CreCCU con liberación en tiempo real
-        function executeCreCCUPayment() {
-            document.getElementById('creccu-error-inline').classList.add('hidden');
-            const amountInput = parseInt(document.getElementById('input-abono-monto').value) || 0;
-
-            if (amountInput <= 0) {
-                showToast('Monto inválido', 'Ingresa un monto mayor a $0 para continuar.', 'fa-triangle-exclamation', 'red');
-                return;
-            }
-
-            const method = document.querySelector('input[name="payment-method-creccu"]:checked').value;
-            if (method === 'bb') {
-                if (!creccuSelectedBank) {
-                    showToast('Elige un banco', 'Selecciona uno de los bancos disponibles para continuar con Botón Bancario.', 'fa-triangle-exclamation', 'red');
-                    return;
-                }
-                openBankRedirect(creccuSelectedBank, (bank) => finalizeCreCCUPayment(amountInput, bank));
-            } else {
-                finalizeCreCCUPayment(amountInput, 'Transferencia Simplificada');
-            }
-        }
-
-        function finalizeCreCCUPayment(amountInput, methodLabel) {
-            // Si está activada la simulación de error para resiliencia (Brief 3.3)
-            if (isErrorSimActive) {
-                document.getElementById('creccu-error-inline').classList.remove('hidden');
-                showToast('Pago rechazado', 'Fondos insuficientes en el banco de origen.', 'fa-triangle-exclamation', 'red');
-                return;
-            }
-
-            // Aplicar pago y recalcular cupo
-            currentDebt = Math.max(0, currentDebt - amountInput);
-            const availableCredit = currentCreditLimit - currentDebt;
-            const usedPercentage = Math.round((currentDebt / currentCreditLimit) * 100);
-
-            document.getElementById('debt-amount-display').innerText = '$' + currentDebt.toLocaleString('es-CL');
-            document.getElementById('credit-available-display').innerText = '$' + availableCredit.toLocaleString('es-CL');
-            document.getElementById('credit-percentage-label').innerText = 'Cupo ocupado: ' + usedPercentage + '%';
-            document.getElementById('credit-bar-used').style.width = usedPercentage + '%';
-            document.getElementById('credit-bar-free').style.width = (100 - usedPercentage) + '%';
-
-            addAuditRow("Abono CreCCU", methodLabel, amountInput);
-
-            const txId = "#TX-" + Math.floor(100000 + Math.random() * 900000);
-            document.getElementById('modal-title').innerText = "¡Abono Recibido y Cupo Liberado!";
-            document.getElementById('modal-body').innerText = "Notificación Webhook enviada con éxito a SAP ERP CCU vía " + methodLabel + ". El cupo de crédito del cliente ha sido restablecido en tiempo real.";
-            document.getElementById('modal-tx-id').innerText = txId;
-            document.getElementById('modal-cupo-freed').innerText = "+$" + amountInput.toLocaleString('es-CL');
-            document.getElementById('modal-success').classList.remove('hidden');
-        }
-
-        // BRIEF 3.1: Pago de Pedido In-App
-        function executeOrderPayment() {
-            document.getElementById('checkout-error-inline').classList.add('hidden');
-            const method = document.querySelector('input[name="payment-method-checkout"]:checked').value;
-            if (method === 'bb') {
-                if (!checkoutSelectedBank) {
-                    showToast('Elige un banco', 'Selecciona uno de los bancos disponibles para continuar con Botón Bancario.', 'fa-triangle-exclamation', 'red');
-                    return;
-                }
-                openBankRedirect(checkoutSelectedBank, (bank) => finalizeOrderPayment(bank));
-            } else {
-                finalizeOrderPayment('Transferencia Simplificada');
-            }
-        }
-
-        function finalizeOrderPayment(methodLabel) {
-            if (isErrorSimActive) {
-                document.getElementById('checkout-error-inline').classList.remove('hidden');
-                showToast('Pago rechazado', 'Fondos insuficientes en el banco de origen.', 'fa-triangle-exclamation', 'red');
-                return;
-            }
-
-            const txId = "#TX-" + Math.floor(100000 + Math.random() * 900000);
-            addAuditRow("Pedido In-App", methodLabel, 98112);
-
-            document.getElementById('modal-title').innerText = "¡Pedido N°S1552286 Pagado!";
-            document.getElementById('modal-body').innerText = "El pago digital fue procesado vía " + methodLabel + ". Se notificó a la central logística y al transportista en ruta para entrega prioritaria.";
-            document.getElementById('modal-tx-id').innerText = txId;
-            document.getElementById('modal-cupo-freed').innerText = "N/A (Pago Pedido)";
-            document.getElementById('modal-success').classList.remove('hidden');
-        }
-
-        // BRIEF 3.5: Lógica de Ajuste de Mermas en Terreno para Transportista
-        function adjustDriverItem(itemKey, delta) {
-            driverQuantities[itemKey] = Math.max(0, driverQuantities[itemKey] + delta);
-            document.getElementById('driver-qty-' + itemKey).innerText = driverQuantities[itemKey];
-            recalculateDriverTotal();
-        }
-
-        function recalculateDriverTotal() {
-            const originalTotal = 98112;
-            const newTotal = (driverQuantities.cach16 * itemPrices.cach16) +
-                             (driverQuantities.cach25 * itemPrices.cach25) +
-                             (driverQuantities.kunst * itemPrices.kunst) + 55385; // base impuestos/flete simulado
-
-            const refund = Math.max(0, originalTotal - newTotal);
-
-            document.getElementById('driver-final-total').innerText = '$' + newTotal.toLocaleString('es-CL');
-            document.getElementById('driver-refund-amount').innerText = '-$' + refund.toLocaleString('es-CL');
-            document.getElementById('qr-modal-amount').innerText = '$' + newTotal.toLocaleString('es-CL');
-        }
-
-        function generateDriverQR() {
-            document.getElementById('driver-qr-modal').classList.remove('hidden');
-        }
-
-        function simulateEPVPaySuccess() {
-            const finalAmount = document.getElementById('driver-final-total').innerText;
-            const badge = document.getElementById('driver-payment-status-badge');
-            
-            badge.className = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold px-2.5 py-1 rounded-full inline-block";
-            badge.innerText = "Pagado Contra Entrega (EPV OK)";
-
-            addAuditRow("Pago Contra Entrega (EPV)", "Transferencia Simplificada (EPV)", parseInt(finalAmount.replace(/\D/g, '')));
-
-            showToast('Pago confirmado en EPV', 'Notificación instantánea enviada a SAP para liberar bajada de carga.', 'fa-circle-check', 'green');
-            document.getElementById('driver-actions').classList.add('hidden');
-            document.getElementById('driver-qr-modal').classList.add('hidden');
-            document.getElementById('driver-closure').classList.remove('hidden');
-        }
-
-        // Cierre formal de entrega — deja la demo lista para la siguiente parada de la ruta
-        function closeDelivery() {
-            showToast('Ruta actualizada', 'Entrega #402 cerrada. Camión disponible para la siguiente parada.', 'fa-flag-checkered', 'blue');
-            document.getElementById('driver-closure').classList.add('hidden');
-            document.getElementById('driver-actions').classList.remove('hidden');
-            const badge = document.getElementById('driver-payment-status-badge');
-            badge.className = "bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-bold px-2.5 py-1 rounded-full inline-block";
-            badge.innerText = "Pendiente Contra Entrega";
-            driverQuantities = { cach16: 1, cach25: 1, kunst: 1 };
-            ['cach16', 'cach25', 'kunst'].forEach(k => document.getElementById('driver-qty-' + k).innerText = '1');
-            recalculateDriverTotal();
-        }
-
-        // BRIEF 3.4: Inserción de Filas en Tabla de Auditoría Backoffice
-        function addAuditRow(type, method, amount) {
-            const tbody = document.getElementById('audit-table-body');
-            const newRow = document.createElement('tr');
-            const txId = "#TX-" + Math.floor(100000 + Math.random() * 900000);
-            
-            newRow.className = "hover:bg-gray-50/80 transition-all fade-in";
-            newRow.innerHTML = `
-                <td class="p-4 font-mono font-bold text-upago-blue">${txId}</td>
-                <td class="p-4">
-                    <span class="font-bold block text-gray-800">BOTILLERIAS CLEBER SPA</span>
-                    <span class="text-[10px] text-gray-400">RUT: 76.452.110-K</span>
-                </td>
-                <td class="p-4"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-semibold">${type}</span></td>
-                <td class="p-4 font-medium">${method}</td>
-                <td class="p-4 font-bold text-gray-900">$${amount.toLocaleString('es-CL')}</td>
-                <td class="p-4"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
-                <td class="p-4 text-gray-400 hover:text-upago-blue cursor-pointer"><i class="fa-solid fa-eye"></i> Audit</td>
-            `;
-            tbody.insertBefore(newRow, tbody.firstChild);
-        }
-
-        // SWITCHER DE ROLES / VISTAS (Demostración para Comité CCU)
+        // CAMBIO DE VISTAS (4 PLATAFORMAS)
         function switchRole(role) {
-            // Ocultar todas las secciones
-            document.getElementById('view-client').classList.add('hidden');
-            document.getElementById('view-driver').classList.add('hidden');
-            document.getElementById('view-backoffice').classList.add('hidden');
-
-            // Reset de estilos de los 3 botones del selector protagónico
-            ['btn-role-client', 'btn-role-driver', 'btn-role-backoffice'].forEach(id => {
+            ['view-micarro', 'view-creccu', 'view-epv', 'view-backoffice'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            ['btn-role-micarro', 'btn-role-creccu', 'btn-role-epv', 'btn-role-backoffice'].forEach(id => {
                 document.getElementById(id).classList.remove('role-active');
             });
 
-            // Mostrar vista elegida
-            if (role === 'client') {
-                document.getElementById('view-client').classList.remove('hidden');
-                document.getElementById('btn-role-client').classList.add('role-active');
-            } else if (role === 'driver') {
-                document.getElementById('view-driver').classList.remove('hidden');
-                document.getElementById('btn-role-driver').classList.add('role-active');
+            if (role === 'micarro') {
+                document.getElementById('view-micarro').classList.remove('hidden');
+                document.getElementById('btn-role-micarro').classList.add('role-active');
+            } else if (role === 'creccu') {
+                document.getElementById('view-creccu').classList.remove('hidden');
+                document.getElementById('btn-role-creccu').classList.add('role-active');
+            } else if (role === 'epv') {
+                document.getElementById('view-epv').classList.remove('hidden');
+                document.getElementById('btn-role-epv').classList.add('role-active');
             } else if (role === 'backoffice') {
                 document.getElementById('view-backoffice').classList.remove('hidden');
                 document.getElementById('btn-role-backoffice').classList.add('role-active');
@@ -1068,53 +982,293 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // SIMULACIÓN DE CONSULTA SAP DE DEUDA
-        function simulateDebtQuery() {
-            showToast('Sincronizado con SAP', 'Consulta de deuda ejecutada exitosamente contra el backend SAP de CCU vía API REST.', 'fa-rotate-right', 'blue');
+        // LÓGICA DE CONTROLES + Y - EN MICARRO CCU
+        function updateMicarroQty(delta) {
+            if (delta < 0 && micarroQty === 1) {
+                openConfirmDeleteModal();
+                return;
+            }
+            micarroQty = Math.max(0, micarroQty + delta);
+            recalculateMicarroTotals();
         }
 
-        // SIMULADOR DE ERROR DE BANCO
-        function toggleErrorSim() {
-            isErrorSimActive = !isErrorSimActive;
-            const btn = document.getElementById('btn-err-toggle');
-            if (isErrorSimActive) {
-                btn.innerText = "Desactivar Error";
-                btn.className = "bg-red-600 text-white px-2.5 py-1 rounded font-bold hover:bg-red-700 transition-all";
+        function openConfirmDeleteModal() {
+            document.getElementById('modal-confirm-delete').classList.remove('hidden');
+        }
+
+        function closeConfirmDeleteModal() {
+            document.getElementById('modal-confirm-delete').classList.add('hidden');
+        }
+
+        function confirmDeleteMicarroItem() {
+            closeConfirmDeleteModal();
+            micarroQty = 0;
+            recalculateMicarroTotals();
+            showToast('Producto eliminado', 'Se removió ROYAL GUARD GOLDEN 650cc del pedido.', 'fa-trash-can', 'red');
+        }
+
+        function clearMicarroCart() {
+            if (micarroQty === 0) return;
+            openConfirmDeleteModal();
+        }
+
+        function restoreMicarroCart() {
+            micarroQty = 1;
+            recalculateMicarroTotals();
+            showToast('Carro restaurado', 'Se recuperó el pedido de prueba N°S1552286.', 'fa-rotate-left', 'green');
+        }
+
+        function recalculateMicarroTotals() {
+            const qtyDisplay = document.getElementById('micarro-qty-display');
+            if (qtyDisplay) qtyDisplay.innerText = micarroQty;
+
+            const itemCard = document.getElementById('micarro-item-card');
+            const emptyState = document.getElementById('micarro-empty-state');
+            const summaryBox = document.getElementById('micarro-summary-box');
+            const continueBtn = document.getElementById('btn-continue-micarro');
+
+            if (micarroQty === 0) {
+                if (itemCard) itemCard.classList.add('hidden');
+                if (emptyState) emptyState.classList.remove('hidden');
+                if (summaryBox) summaryBox.classList.add('opacity-40');
+                if (continueBtn) {
+                    continueBtn.disabled = true;
+                    continueBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
             } else {
-                btn.innerText = "Activar Simulación de Error";
-                btn.className = "bg-amber-200 text-amber-900 px-2.5 py-1 rounded font-bold hover:bg-amber-300 transition-all";
+                if (itemCard) itemCard.classList.remove('hidden');
+                if (emptyState) emptyState.classList.add('hidden');
+                if (summaryBox) summaryBox.classList.remove('opacity-40');
+                if (continueBtn) {
+                    continueBtn.disabled = false;
+                    continueBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            const total = micarroQty * micarroValues.unitPrice;
+            const subtotal = micarroQty * micarroValues.subtotal;
+            const discount = micarroQty * micarroValues.discount;
+            const iva = micarroQty * micarroValues.iva;
+            const iab = micarroQty * micarroValues.iab;
+            const flete = micarroQty * micarroValues.flete;
+
+            // Actualizar elementos Paso 1
+            const itemTotalTop = document.getElementById('micarro-item-total-top');
+            if (itemTotalTop) itemTotalTop.innerText = '$' + total.toLocaleString('es-CL');
+
+            const subtotalEl = document.getElementById('micarro-subtotal-val');
+            if (subtotalEl) subtotalEl.innerText = '$' + subtotal.toLocaleString('es-CL');
+
+            const discountEl = document.getElementById('micarro-discount-val');
+            if (discountEl) discountEl.innerText = '-$' + discount.toLocaleString('es-CL');
+
+            const ivaEl = document.getElementById('micarro-iva-val');
+            if (ivaEl) ivaEl.innerText = '$' + iva.toLocaleString('es-CL');
+
+            const iabEl = document.getElementById('micarro-iab-val');
+            if (iabEl) iabEl.innerText = '$' + iab.toLocaleString('es-CL');
+
+            const fleteEl = document.getElementById('micarro-flete-val');
+            if (fleteEl) fleteEl.innerText = '$' + flete.toLocaleString('es-CL');
+
+            const grandTotalEl = document.getElementById('micarro-total-val');
+            if (grandTotalEl) grandTotalEl.innerText = '$' + total.toLocaleString('es-CL');
+
+            // Actualizar elementos Paso 3 (Resumen)
+            const step3Subtotal = document.getElementById('micarro-step3-subtotal-val');
+            if (step3Subtotal) step3Subtotal.innerText = '$' + subtotal.toLocaleString('es-CL');
+
+            const step3Discount = document.getElementById('micarro-step3-discount-val');
+            if (step3Discount) step3Discount.innerText = '-$' + discount.toLocaleString('es-CL');
+
+            const step3Iva = document.getElementById('micarro-step3-iva-val');
+            if (step3Iva) step3Iva.innerText = '$' + iva.toLocaleString('es-CL');
+
+            const step3Iab = document.getElementById('micarro-step3-iab-val');
+            if (step3Iab) step3Iab.innerText = '$' + iab.toLocaleString('es-CL');
+
+            const step3Flete = document.getElementById('micarro-step3-flete-val');
+            if (step3Flete) step3Flete.innerText = '$' + flete.toLocaleString('es-CL');
+
+            const step3Total = document.getElementById('micarro-step3-total-val');
+            if (step3Total) step3Total.innerText = '$' + total.toLocaleString('es-CL');
+        }
+
+        // CONMUTACIÓN PESTAÑAS NO FACTURADOS / FACTURADOS EN CRECCU
+        function toggleCreccuFilter(filterType) {
+            const btnUnfactored = document.getElementById('btn-filter-unfactored');
+            const btnFactored = document.getElementById('btn-filter-factored');
+            const listUnfactored = document.getElementById('movements-unfactored');
+            const listFactored = document.getElementById('movements-factored');
+            const labelLeft = document.getElementById('label-summary-left');
+            const labelRight = document.getElementById('label-summary-right');
+
+            if (filterType === 'no-facturados') {
+                btnUnfactored.className = "bg-ccu-actionGreen text-white text-xs font-bold px-3 py-1 rounded-full transition-all";
+                btnFactored.className = "text-gray-500 text-xs font-bold px-3 py-1 rounded-full hover:bg-gray-100 transition-all";
+                listUnfactored.classList.remove('hidden');
+                listFactored.classList.add('hidden');
+                labelLeft.innerHTML = '<i class="fa-solid fa-cart-shopping mr-1"></i>Compras: $248.887';
+                labelRight.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>Pagos: $15.000';
+            } else {
+                btnFactored.className = "bg-ccu-teal text-white text-xs font-bold px-3 py-1 rounded-full transition-all";
+                btnUnfactored.className = "text-gray-500 text-xs font-bold px-3 py-1 rounded-full hover:bg-gray-100 transition-all";
+                listUnfactored.classList.add('hidden');
+                listFactored.classList.remove('hidden');
+                labelLeft.innerHTML = '<i class="fa-solid fa-file-invoice-dollar mr-1"></i>Facturado: $600.200';
+                labelRight.innerHTML = '<i class="fa-solid fa-shield-check mr-1"></i>Pagado SAP: $600.200';
             }
         }
 
-        function closeSuccessModal() {
-            document.getElementById('modal-success').classList.add('hidden');
-        }
+        // FLUJO MICARRO CCU
+        function goToMicarroStep(step) {
+            if (micarroQty === 0 && step > 1) {
+                showToast('Carro vacío', 'Añade al menos 1 producto para continuar.', 'fa-triangle-exclamation', 'red');
+                return;
+            }
 
-        // BRIEF 3.1: Dos momentos de pago — anticipado (checkout normal) vs contra entrega (se paga en la EPV, no aquí)
-        function setPaymentMoment(moment) {
-            const btnNow = document.getElementById('btn-pay-now');
-            const btnDelivery = document.getElementById('btn-pay-delivery');
-            const methodsBox = document.getElementById('checkout-methods-container');
-            const deliveryNote = document.getElementById('checkout-delivery-note');
-            const payBtn = document.getElementById('btn-procesar-pedido');
+            [1, 2, 3].forEach(s => {
+                document.getElementById('micarro-step-' + s).classList.add('hidden');
+                const nav = document.getElementById('step-nav-' + s);
+                nav.className = 'flex items-center gap-1.5 text-gray-400';
+                nav.querySelector('span').className = 'w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px]';
+            });
 
-            if (moment === 'now') {
-                btnNow.className = "p-3 border-2 border-upago-blue bg-upago-blue/5 rounded-xl text-left transition-all";
-                btnDelivery.className = "p-3 border border-gray-200 rounded-xl text-left hover:border-gray-300 transition-all";
-                methodsBox.classList.remove('hidden');
-                deliveryNote.classList.add('hidden');
-                payBtn.classList.remove('hidden');
-            } else {
-                btnDelivery.className = "p-3 border-2 border-ccu-actionGreen bg-emerald-50 rounded-xl text-left transition-all";
-                btnNow.className = "p-3 border border-gray-200 rounded-xl text-left hover:border-gray-300 transition-all";
-                methodsBox.classList.add('hidden');
-                deliveryNote.classList.remove('hidden');
-                payBtn.classList.add('hidden');
+            document.getElementById('micarro-step-' + step).classList.remove('hidden');
+            const activeNav = document.getElementById('step-nav-' + step);
+            activeNav.className = 'flex items-center gap-1.5 text-ccu-actionGreen font-bold';
+            activeNav.querySelector('span').className = 'w-6 h-6 rounded-full bg-ccu-actionGreen text-white flex items-center justify-center text-[10px]';
+
+            if (step === 3) {
+                const methodRadio = document.querySelector('input[name="micarro-payment-method"]:checked');
+                let labelText = "Crédito CRECCU";
+                if (methodRadio.value === 'transfer') labelText = "Transferencia Bancaria (UPAGO)";
+                else if (methodRadio.value === 'contado') labelText = "Contado (Contra Entrega)";
+                document.getElementById('summary-payment-selected-label').innerText = labelText;
             }
         }
 
-        // ═══ INIT ═══
-        switchRole('client');
+        function confirmMicarroPurchase() {
+            const finalTotal = micarroQty * micarroValues.unitPrice;
+            showToast('¡Compra Realizada!', `Pedido N°S1552286 procesado por $${finalTotal.toLocaleString('es-CL')}. Notificación Webhook enviada a SAP ERP.`, 'fa-circle-check', 'green');
+            addAuditRow("Pedido miCarro", "Crédito CRECCU", finalTotal);
+            setTimeout(() => goToMicarroStep(1), 2500);
+        }
+
+        // FLUJO CRECCU
+        function openCreccuPayModal() {
+            document.getElementById('creccu-pay-modal').classList.remove('hidden');
+            goToCreccuPayStep(1);
+        }
+        function closeCreccuPayModal() {
+            document.getElementById('creccu-pay-modal').classList.add('hidden');
+        }
+        function goToCreccuPayStep(step) {
+            document.getElementById('creccu-pay-step-1').classList.toggle('hidden', step !== 1);
+            document.getElementById('creccu-pay-step-2').classList.toggle('hidden', step !== 2);
+        }
+
+        function executeCreccuPaymentFinal() {
+            closeCreccuPayModal();
+            const bank = document.querySelector('input[name="creccu-bank-choice"]:checked').value;
+            showToast('¡Abono Recibido!', `Pago de $922.122 procesado vía ${bank}. Cupo de crédito liberado en tiempo real en SAP.`, 'fa-circle-check', 'green');
+            
+            creccuUsed = 0;
+            updateCreccuBars();
+            addAuditRow("Abono CreCCU", bank, 922122);
+        }
+
+        function updateCreccuBars() {
+            const free = creccuTotal - creccuUsed;
+            const pct = Math.round((creccuUsed / creccuTotal) * 100);
+            document.getElementById('creccu-used-amount-display').innerText = '$' + creccuUsed.toLocaleString('es-CL');
+            document.getElementById('creccu-free-amount-display').innerText = '$' + free.toLocaleString('es-CL');
+            document.getElementById('creccu-used-bar').style.width = pct + '%';
+            document.getElementById('creccu-free-bar').style.width = (100 - pct) + '%';
+        }
+
+        // MODAL PAC / PAT
+        function openPacSubscriptionModal() { document.getElementById('modal-pac-subscription').classList.remove('hidden'); }
+        function closePacSubscriptionModal() { document.getElementById('modal-pac-subscription').classList.add('hidden'); }
+        function confirmPacSubscription() {
+            closePacSubscriptionModal();
+            showToast('PAC/PAT Activado', 'Suscripción registrada. Se debitará automáticamente el cupo utilizado los días 20 de cada mes.', 'fa-arrows-rotate', 'blue');
+            addAuditRow("Mandato PAC Día 20", "Débito Automático BancoChile", 233887);
+        }
+
+        // REAJUSTE EPV LOGÍSTICA
+        function adjustEpvItem(delta) {
+            epvQty = Math.max(0, epvQty + delta);
+            document.getElementById('epv-qty').innerText = epvQty;
+            const newTotal = epvQty * itemUnitPrice;
+            const refund = itemUnitPrice - newTotal;
+            document.getElementById('epv-final-amount').innerText = '$' + newTotal.toLocaleString('es-CL');
+            document.getElementById('epv-refund-amount').innerText = '-$' + refund.toLocaleString('es-CL');
+        }
+
+        function executeEpvSync() {
+            const dest = document.querySelector('input[name="epv-refund-dest"]:checked').value;
+            const statusBadge = document.getElementById('epv-status-badge');
+            statusBadge.className = "bg-emerald-100 text-emerald-800 text-[11px] font-bold px-3 py-1 rounded-full";
+            statusBadge.innerText = "Reajuste Sincronizado en EPV y SAP";
+
+            const diff = itemUnitPrice - (epvQty * itemUnitPrice);
+            showToast('Sincronizado con EPV CCU', `Reajuste enviado a máquina EPV. Saldo abonado a ${dest === 'wallet' ? 'Wallet CreCCU' : 'Payout TEF'}.`, 'fa-truck-fast', 'green');
+            addAuditRow("Reajuste EPV", dest === 'wallet' ? "Wallet CreCCU" : "Payout Directo", diff);
+        }
+
+        // AUDITORÍA Y AGREGADO DINÁMICO DE FILAS CON CONTADOR SCROLL
+        function addAuditRow(type, method, amount) {
+            const tbody = document.getElementById('audit-table-body');
+            const newRow = document.createElement('tr');
+            const txId = "#TX-" + Math.floor(100000 + Math.random() * 900000);
+            
+            newRow.className = "hover:bg-gray-50/80 transition-all fade-in";
+            newRow.innerHTML = `
+                <td class="p-3.5 font-mono font-bold text-upago-blue">${txId}</td>
+                <td class="p-3.5">
+                    <span class="font-bold block text-gray-800">BOTILLERIAS CLEBER SPA</span>
+                    <span class="text-[10px] text-gray-400">RUT: 76.452.110-K</span>
+                </td>
+                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-semibold">${type}</span></td>
+                <td class="p-3.5 font-medium">${method}</td>
+                <td class="p-3.5 font-bold text-gray-900 font-mono">$${amount.toLocaleString('es-CL')}</td>
+                <td class="p-3.5"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center w-fit gap-1"><i class="fa-solid fa-check"></i> Sincronizado</span></td>
+                <td class="p-3.5 text-center">
+                    <button onclick="openAuditModal('${txId}', '${type}', '${method}', ${amount})" class="bg-upago-blue/10 text-upago-blue hover:bg-upago-blue hover:text-white px-2.5 py-1 rounded text-[11px] font-bold transition-all">
+                        <i class="fa-solid fa-code"></i> Auditar Webhook
+                    </button>
+                </td>
+            `;
+            tbody.insertBefore(newRow, tbody.firstChild);
+
+            totalTxCount++;
+            const counterEl = document.getElementById('tx-count-number');
+            if (counterEl) counterEl.innerText = totalTxCount;
+        }
+
+        function openAuditModal(txId, type, method, amount) {
+            document.getElementById('audit-modal-tx').innerText = "Auditoría " + txId;
+            const mockPayload = {
+                transaction_id: txId,
+                client_rut: "76.452.110-K",
+                operation_type: type,
+                payment_gateway: method,
+                amount_clp: amount,
+                currency: "CLP",
+                sap_doc_entry: "SAP-DOC-" + Math.floor(100000 + Math.random() * 900000),
+                pci_dss_token: "tok_pci_" + Math.random().toString(36).substring(2, 10),
+                timestamp: new Date().toISOString(),
+                status: "200_OK_SAP_SYNCHRONIZED"
+            };
+            document.getElementById('audit-json-code').innerText = JSON.stringify(mockPayload, null, 2);
+            document.getElementById('modal-audit-detail').classList.remove('hidden');
+        }
+
+        function closeAuditModal() { document.getElementById('modal-audit-detail').classList.add('hidden'); }
+
+        // INIT
+        switchRole('micarro');
     </script>
 </body>
 </html>
