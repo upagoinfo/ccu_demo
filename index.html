@@ -65,7 +65,6 @@
         #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 70; display: flex; flex-direction: column; gap: 0.5rem; }
         .toast { animation: fadeIn 0.25s ease-in-out; }
 
-        /* Estilo personalizado para la barra de scroll de la tabla */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #F3F4F6; border-radius: 8px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
@@ -95,7 +94,6 @@
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 text-center sm:text-left">
                 Demostración de Plataformas B2B (Licitación CCU)
             </p>
-            <!-- GRID RESPONSIVO: 2x2 en móviles/tablets (grid-cols-2) y 4 columnas en desktop (md:grid-cols-4) -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                 <!-- VISTA 1: miCarro CCU -->
                 <button onclick="switchRole('micarro')" id="btn-role-micarro" class="role-btn flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border-2 transition-all text-left">
@@ -111,7 +109,7 @@
                     <div class="role-icon w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-sm sm:text-base flex-shrink-0"><i class="fa-solid fa-wallet"></i></div>
                     <div class="min-w-0">
                         <span class="block text-[11px] sm:text-xs font-extrabold truncate">Portal CreCCU</span>
-                        <span class="block text-[9px] sm:text-[10px] opacity-80 truncate">Portal Financiero &amp; PAC</span>
+                        <span class="block text-[9px] sm:text-[10px] opacity-80 truncate">Portal Financiero &amp; PAC/PAT</span>
                     </div>
                 </button>
 
@@ -141,6 +139,7 @@
 
         <!-- ================================================================================= -->
         <!-- MOCKUP 1: miCarro CCU (e-Commerce B2B) -->
+        <!-- Rediseñado según feedback de Felipe: incluye Crédito CRECCU, Wallet, Tarjetas (Trx completa) y Botones Bancarios -->
         <!-- ================================================================================= -->
         <section id="view-micarro" class="space-y-6 fade-in max-w-3xl mx-auto">
 
@@ -176,7 +175,7 @@
                     </div>
                 </div>
 
-                <!-- PASO 1: CARRITO Y RESUMEN (MicarroCCU_resumen carrito.webp) -->
+                <!-- PASO 1: CARRITO Y RESUMEN -->
                 <div id="micarro-step-1" class="space-y-4">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-base text-gray-800">Checkout del Pedido N°S1552286</h3>
@@ -185,7 +184,7 @@
                         </button>
                     </div>
 
-                    <!-- CARD DE PRODUCTO EXTRAÍDO DE CAPTURA REAL CON CONTROLES + Y - FUNCIONALES -->
+                    <!-- CARD DE PRODUCTO CON CONTROLES + Y - FUNCIONALES -->
                     <div id="micarro-item-card" class="border rounded-2xl p-4 flex gap-4 items-center bg-gray-50/50 transition-all">
                         <div class="relative w-20 h-20 bg-white border rounded-xl flex items-center justify-center flex-shrink-0">
                             <span class="absolute top-1 left-1 bg-ccu-discountRed text-white text-[9px] font-black px-1 rounded">-23%</span>
@@ -210,7 +209,7 @@
                         </div>
                     </div>
 
-                    <!-- ESTADO CARRO VACÍO (MUESTRA CUANDO CANTIDAD LLEGA A 0 Y SE CONFIRMA BORRADO) -->
+                    <!-- ESTADO CARRO VACÍO -->
                     <div id="micarro-empty-state" class="hidden border border-dashed border-gray-300 rounded-2xl p-8 text-center space-y-3 bg-gray-50/50 fade-in">
                         <div class="w-12 h-12 bg-gray-200 text-gray-400 rounded-full flex items-center justify-center text-xl mx-auto">
                             <i class="fa-solid fa-cart-shopping"></i>
@@ -243,13 +242,13 @@
                     </button>
                 </div>
 
-                <!-- PASO 2: SELECCIÓN MÉTODO DE PAGO (MicarroCCU_selección forma de pago.webp) -->
+                <!-- PASO 2: SELECCIÓN MÉTODO DE PAGO (REDISEÑADO SEGÚN FEEDBACK FELIPE) -->
                 <div id="micarro-step-2" class="hidden space-y-4">
                     <h3 class="font-bold text-base text-gray-800">Seleccione método de pago</h3>
 
                     <div class="space-y-3">
-                        <!-- OPCIÓN 1: CRÉDITO CRECCU (RÉPLICA CAPTURA REAL) -->
-                        <label class="border-2 border-ccu-teal bg-ccu-mintBg p-4 rounded-2xl flex items-center justify-between cursor-pointer shadow-sm">
+                        <!-- OPCIÓN 1: CRÉDITO CRECCU -->
+                        <label onclick="toggleMicarroPaymentDetails('creccu')" class="border-2 border-ccu-teal bg-ccu-mintBg p-4 rounded-2xl flex items-center justify-between cursor-pointer shadow-sm">
                             <div class="flex items-center gap-3">
                                 <input type="radio" name="micarro-payment-method" value="creccu" checked class="text-ccu-teal text-lg">
                                 <div>
@@ -260,20 +259,107 @@
                             <span class="bg-ccu-teal text-white text-[10px] font-bold px-2.5 py-1 rounded-full">Cupo Aprobado</span>
                         </label>
 
-                        <!-- OPCIÓN 2: TRANSFERENCIA BANCARIA (UPAGO INTEGRADO) -->
-                        <label class="border p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-gray-300 transition-all bg-white">
+                        <!-- OPCIÓN 2: SALDO WALLET (REQUERIDO POR FELIPE) -->
+                        <label onclick="toggleMicarroPaymentDetails('wallet')" class="border p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-gray-300 transition-all bg-white">
                             <div class="flex items-center gap-3">
-                                <input type="radio" name="micarro-payment-method" value="transfer" class="text-ccu-teal text-lg">
+                                <input type="radio" name="micarro-payment-method" value="wallet" class="text-ccu-teal text-lg">
                                 <div>
-                                    <span class="font-bold text-sm block text-gray-900">Transferencia Bancaria</span>
-                                    <span class="text-xs text-gray-500 block">Transferencia Simplificada (UPAGO)</span>
+                                    <span class="font-bold text-sm block text-gray-900">Saldo Wallet CCU</span>
+                                    <span class="text-xs text-emerald-600 font-semibold block">Disponible a favor $15.000</span>
                                 </div>
                             </div>
-                            <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded">Fase 1</span>
+                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">A favor</span>
                         </label>
 
-                        <!-- OPCIÓN 3: CONTADO -->
-                        <label class="border p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-gray-300 transition-all bg-white">
+                        <!-- OPCIÓN 3: TARJETA DE CRÉDITO / DÉBITO (EXPERIENCIA TRX COMPLETA REQUERIDA POR FELIPE) -->
+                        <div class="border rounded-2xl p-4 transition-all bg-white space-y-3">
+                            <label onclick="toggleMicarroPaymentDetails('card')" class="flex items-center justify-between cursor-pointer">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="micarro-payment-method" value="card" class="text-ccu-teal text-lg">
+                                    <div>
+                                        <span class="font-bold text-sm block text-gray-900">Tarjeta de Crédito / Débito</span>
+                                        <span class="text-xs text-gray-500 block">Pago con tarjetas Visa, Mastercard o Redcompra</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-gray-600 text-lg">
+                                    <i class="fa-brands fa-cc-visa text-blue-600"></i>
+                                    <i class="fa-brands fa-cc-mastercard text-red-500"></i>
+                                </div>
+                            </label>
+
+                            <!-- FORMULARIO DE TARJETA TRANSACCIÓN COMPLETA (DESPLEGABLE) -->
+                            <div id="micarro-card-form" class="hidden pt-3 border-t space-y-3 text-xs fade-in">
+                                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center gap-2 text-blue-800">
+                                    <i class="fa-solid fa-shield-halved text-upago-blue"></i>
+                                    <span class="text-[11px]">Procesado vía Pasarela Segura UPAGO — Tokenización PCI-DSS</span>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-gray-700 mb-1">Número de Tarjeta:</label>
+                                    <div class="relative">
+                                        <input type="text" placeholder="4500 •••• •••• 1289" value="4500 8920 1192 1289" class="w-full border border-gray-300 rounded-xl p-2.5 font-mono text-gray-800 focus:outline-none focus:border-upago-blue">
+                                        <i class="fa-brands fa-cc-visa absolute right-3 top-3 text-lg text-blue-600"></i>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-1">Vencimiento:</label>
+                                        <input type="text" placeholder="MM/AA" value="08/28" class="w-full border border-gray-300 rounded-xl p-2.5 font-mono text-gray-800">
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-gray-700 mb-1">Código CVV:</label>
+                                        <input type="password" placeholder="•••" value="892" class="w-full border border-gray-300 rounded-xl p-2.5 font-mono text-gray-800">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-gray-700 mb-1">Nombre del Titular:</label>
+                                    <input type="text" value="BOTILLERIAS CLEBER SPA" class="w-full border border-gray-300 rounded-xl p-2.5 font-medium text-gray-800">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OPCIÓN 4: TRANSFERENCIA SIMPLIFICADA / BOTONES BANCOS (REQUERIDO POR FELIPE) -->
+                        <div class="border rounded-2xl p-4 transition-all bg-white space-y-3">
+                            <label onclick="toggleMicarroPaymentDetails('transfer')" class="flex items-center justify-between cursor-pointer">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="micarro-payment-method" value="transfer" class="text-ccu-teal text-lg">
+                                    <div>
+                                        <span class="font-bold text-sm block text-gray-900">Transferencia / Botones Bancarios</span>
+                                        <span class="text-xs text-gray-500 block">Transferencia Simplificada instantánea UPAGO</span>
+                                    </div>
+                                </div>
+                                <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded">Fase 1</span>
+                            </label>
+
+                            <!-- BOTONES DE PAGOS DIRECTOS BANCOS (DESPLEGABLE) -->
+                            <div id="micarro-bank-buttons" class="hidden pt-3 border-t space-y-2 fade-in">
+                                <span class="text-[11px] font-bold text-gray-600 block">Selecciona tu banco para pago directo:</span>
+                                <div class="grid grid-cols-5 gap-1.5">
+                                    <button type="button" onclick="selectBankDirect('Banco de Chile')" class="p-2 border rounded-xl hover:border-upago-blue text-center bg-gray-50 flex flex-col items-center gap-1">
+                                        <i class="fa-solid fa-building-columns text-upago-blue text-sm"></i>
+                                        <span class="text-[9px] font-bold text-gray-700">BancoChile</span>
+                                    </button>
+                                    <button type="button" onclick="selectBankDirect('Santander')" class="p-2 border rounded-xl hover:border-upago-blue text-center bg-gray-50 flex flex-col items-center gap-1">
+                                        <i class="fa-solid fa-credit-card text-red-600 text-sm"></i>
+                                        <span class="text-[9px] font-bold text-gray-700">Santander</span>
+                                    </button>
+                                    <button type="button" onclick="selectBankDirect('BCI')" class="p-2 border rounded-xl hover:border-upago-blue text-center bg-gray-50 flex flex-col items-center gap-1">
+                                        <i class="fa-solid fa-vault text-blue-800 text-sm"></i>
+                                        <span class="text-[9px] font-bold text-gray-700">BCI</span>
+                                    </button>
+                                    <button type="button" onclick="selectBankDirect('BancoEstado')" class="p-2 border rounded-xl hover:border-upago-blue text-center bg-gray-50 flex flex-col items-center gap-1">
+                                        <i class="fa-solid fa-landmark text-orange-600 text-sm"></i>
+                                        <span class="text-[9px] font-bold text-gray-700">BancoEstado</span>
+                                    </button>
+                                    <button type="button" onclick="selectBankDirect('Scotiabank')" class="p-2 border rounded-xl hover:border-upago-blue text-center bg-gray-50 flex flex-col items-center gap-1">
+                                        <i class="fa-solid fa-gem text-red-700 text-sm"></i>
+                                        <span class="text-[9px] font-bold text-gray-700">Scotiabank</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OPCIÓN 5: CONTADO -->
+                        <label onclick="toggleMicarroPaymentDetails('contado')" class="border p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-gray-300 transition-all bg-white">
                             <div class="flex items-center gap-3">
                                 <input type="radio" name="micarro-payment-method" value="contado" class="text-ccu-teal text-lg">
                                 <div>
@@ -281,18 +367,6 @@
                                     <span class="text-xs text-gray-500 block">Pago contra entrega en camión</span>
                                 </div>
                             </div>
-                        </label>
-
-                        <!-- OPCIÓN 4: CHEQUE (INACTIVO EN CAPTURA REAL) -->
-                        <label class="border border-gray-200 bg-gray-50 p-4 rounded-2xl flex items-center justify-between opacity-60 cursor-not-allowed">
-                            <div class="flex items-center gap-3">
-                                <input type="radio" name="micarro-payment-method" disabled class="text-gray-400">
-                                <div>
-                                    <span class="font-bold text-sm block text-gray-500">Cheque / Solo Firma</span>
-                                    <span class="text-xs text-gray-400 block">Cheque / Solo Firma no disponible</span>
-                                </div>
-                            </div>
-                            <span class="bg-gray-200 text-gray-500 text-[10px] font-bold px-2 py-0.5 rounded">Inactivo</span>
                         </label>
                     </div>
 
@@ -302,7 +376,7 @@
                     </div>
                 </div>
 
-                <!-- PASO 3: RESUMEN FINAL ANTES DE CONFIRMAR (MicarroCCU_paso final resumen antes de confirmar compra.webp) -->
+                <!-- PASO 3: RESUMEN FINAL ANTES DE CONFIRMAR -->
                 <div id="micarro-step-3" class="hidden space-y-4">
                     <h3 class="font-bold text-base text-gray-800">Resumen de compra</h3>
 
@@ -358,7 +432,7 @@
                     <span class="text-[10px] text-teal-100 font-mono"><i class="fa-solid fa-clock mr-1"></i>Última actualización 15:36</span>
                 </div>
 
-                <!-- CARD CUPO Y SALDOS (DATOS REAELS DE CAPTURA CreCCU_home.webp) -->
+                <!-- CARD CUPO Y SALDOS -->
                 <div>
                     <span class="text-xs text-teal-100 block">Monto utilizado</span>
                     <span id="creccu-used-amount-display" class="text-3xl font-black text-white">$233.887</span>
@@ -405,7 +479,7 @@
                     <span id="label-summary-right" class="text-emerald-600"><i class="fa-solid fa-circle-check mr-1"></i>Pagos: $15.000</span>
                 </div>
 
-                <!-- MOVIMIENTOS NO FACTURADOS (POR DEFECTO) -->
+                <!-- MOVIMIENTOS NO FACTURADOS -->
                 <div id="movements-unfactored" class="divide-y divide-gray-100 text-xs space-y-1">
                     <div class="py-3 space-y-1">
                         <span class="text-[10px] font-bold text-gray-400 uppercase">Lunes 4 de mayo de 2026</span>
@@ -437,7 +511,7 @@
                 </div>
             </div>
 
-            <!-- MODAL SELECCIÓN DE DEUDA Y MEDIO DE PAGO CRECCU -->
+            <!-- MODAL SELECCIÓN DE DEUDA Y MEDIO DE PAGO CRECCU (INCLUYE TARJETAS Y WALLET) -->
             <div id="creccu-pay-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
                 <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
                     <div class="flex justify-between items-center border-b pb-3">
@@ -445,7 +519,7 @@
                         <button onclick="closeCreccuPayModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
                     </div>
 
-                    <!-- RESUMEN DEUDA EXTRAÍDO DE CreCCU_cuanto desea abonar.webp -->
+                    <!-- PASO 1: RESUMEN Y SELECCIÓN DE MONTO -->
                     <div id="creccu-pay-step-1" class="space-y-4">
                         <div class="bg-gray-50 p-4 rounded-2xl space-y-2 text-xs border border-gray-200">
                             <div class="flex justify-between text-gray-600"><span>Total facturado por pagar:</span><strong class="text-gray-900">$922.122</strong></div>
@@ -478,7 +552,7 @@
                         </button>
                     </div>
 
-                    <!-- PASO 2: SELECCIÓN MEDIO DE PAGO -->
+                    <!-- PASO 2: SELECCIÓN MEDIO DE PAGO (REDISEÑADO CON TARJETAS Y WALLET) -->
                     <div id="creccu-pay-step-2" class="hidden space-y-4">
                         <div class="bg-ccu-mintBg p-3 rounded-xl flex justify-between items-center text-xs">
                             <span class="text-gray-600">Monto a pagar:</span>
@@ -487,30 +561,52 @@
 
                         <label class="block text-xs font-bold text-gray-700">Selecciona el medio de pago:</label>
                         <div class="space-y-2 text-xs">
-                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                            <!-- BANCOS DIRECTOS -->
+                            <label onclick="toggleCreccuPayMethodDetails('bank')" class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
                                 <input type="radio" name="creccu-bank-choice" value="Banco de Chile" checked class="text-ccu-teal">
                                 <i class="fa-solid fa-building-columns text-upago-blue text-base"></i>
-                                <span class="font-bold text-gray-800">Banco de Chile</span>
+                                <span class="font-bold text-gray-800">Banco de Chile / Botones Bancarios</span>
                             </label>
-                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                            <label onclick="toggleCreccuPayMethodDetails('bank')" class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
                                 <input type="radio" name="creccu-bank-choice" value="BancoEstado" class="text-ccu-teal">
                                 <i class="fa-solid fa-landmark text-orange-600 text-base"></i>
                                 <span class="font-bold text-gray-800">BancoEstado</span>
                             </label>
-                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                            <label onclick="toggleCreccuPayMethodDetails('bank')" class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
                                 <input type="radio" name="creccu-bank-choice" value="SERVIPAG" class="text-ccu-teal">
                                 <i class="fa-solid fa-receipt text-amber-500 text-base"></i>
                                 <span class="font-bold text-gray-800">SERVIPAG</span>
                             </label>
-                            <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
-                                <input type="radio" name="creccu-bank-choice" value="Santander" class="text-ccu-teal">
-                                <i class="fa-solid fa-credit-card text-red-600 text-base"></i>
-                                <span class="font-bold text-gray-800">Santander</span>
-                            </label>
-                            <label class="p-3 border-2 border-upago-blue bg-upago-blue/5 rounded-xl flex items-center gap-3 cursor-pointer">
-                                <input type="radio" name="creccu-bank-choice" value="Transferencia Simplificada (UPAGO)" class="text-upago-blue">
+                            <label onclick="toggleCreccuPayMethodDetails('bank')" class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
+                                <input type="radio" name="creccu-bank-choice" value="Transferencia Simplificada (UPAGO)" class="text-ccu-teal">
                                 <i class="fa-solid fa-bolt text-upago-blue text-base"></i>
                                 <span class="font-bold text-upago-dark">Transferencia Simplificada (UPAGO)</span>
+                            </label>
+
+                            <!-- TARJETA CRÉDITO/DÉBITO TRX COMPLETA -->
+                            <div class="border rounded-xl p-3 bg-white space-y-2">
+                                <label onclick="toggleCreccuPayMethodDetails('card')" class="flex items-center gap-3 cursor-pointer">
+                                    <input type="radio" name="creccu-bank-choice" value="Tarjeta de Crédito/Débito" class="text-ccu-teal">
+                                    <i class="fa-solid fa-credit-card text-emerald-600 text-base"></i>
+                                    <span class="font-bold text-gray-800">Tarjeta de Crédito / Débito (Trx Completa)</span>
+                                </label>
+                                <div id="creccu-card-form" class="hidden pt-2 border-t space-y-2 fade-in text-[11px]">
+                                    <input type="text" placeholder="Número de Tarjeta (16 dígitos)" value="4500 8920 1192 1289" class="w-full border rounded-lg p-2 font-mono">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="text" placeholder="MM/AA" value="08/28" class="w-full border rounded-lg p-2 font-mono">
+                                        <input type="password" placeholder="CVV" value="892" class="w-full border rounded-lg p-2 font-mono">
+                                    </div>
+                                    <input type="text" value="BOTILLERIAS CLEBER SPA" class="w-full border rounded-lg p-2 font-medium">
+                                </div>
+                            </div>
+
+                            <!-- SALDO WALLET -->
+                            <label onclick="toggleCreccuPayMethodDetails('wallet')" class="p-3 border rounded-xl flex items-center justify-between cursor-pointer hover:border-ccu-teal bg-white">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="creccu-bank-choice" value="Saldo Wallet CCU" class="text-ccu-teal">
+                                    <i class="fa-solid fa-wallet text-amber-500 text-base"></i>
+                                    <span class="font-bold text-gray-800">Abonar con Saldo Wallet ($15.000 a favor)</span>
+                                </div>
                             </label>
                         </div>
 
@@ -522,22 +618,29 @@
                 </div>
             </div>
 
-            <!-- MODAL SUSCRIPCIÓN PAC / PAT -->
+            <!-- MODAL SUSCRIPCIÓN PAC / PAT (REQUERIDO POR FELIPE: INCLUYE FORMULARIO PAT TARJETA) -->
             <div id="modal-pac-subscription" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
                 <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
                     <div class="flex justify-between items-center border-b pb-3">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-arrows-rotate text-upago-blue text-base"></i>
-                            <h3 class="text-sm font-bold text-gray-800">Suscripción PAC / PAT — Cobro Automático</h3>
+                            <h3 class="text-sm font-bold text-gray-800">Suscripción Cobro Automático (Día 20)</h3>
                         </div>
                         <button onclick="closePacSubscriptionModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+
+                    <!-- PESTAÑAS PAC / PAT -->
+                    <div class="flex bg-gray-100 p-1 rounded-xl text-xs font-bold">
+                        <button id="btn-tab-pac" onclick="switchPacPatTab('pac')" class="w-1/2 py-2 rounded-lg bg-white shadow-sm text-upago-blue">PAC (Cuenta Corriente)</button>
+                        <button id="btn-tab-pat" onclick="switchPacPatTab('pat')" class="w-1/2 py-2 rounded-lg text-gray-500 hover:text-gray-700">PAT (Tarjeta de Crédito)</button>
                     </div>
 
                     <p class="text-xs text-gray-600 leading-relaxed">
                         Mecanismo para asegurar el pago del cupo de crédito CreCCU en la fecha de vencimiento fija (<strong>los días 20 de cada mes calendario siguiente a la compra</strong>).
                     </p>
 
-                    <div class="space-y-3 text-xs">
+                    <!-- FORMULARIO PAC (CUENTA CORRIENTE) -->
+                    <div id="pac-form-content" class="space-y-3 text-xs">
                         <div>
                             <label class="block font-bold text-gray-700 mb-1">Banco Emisor Cuenta Corriente:</label>
                             <select class="w-full border border-gray-300 rounded-xl p-2.5 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-upago-blue font-medium">
@@ -551,14 +654,37 @@
                             <label class="block font-bold text-gray-700 mb-1">Número de Cuenta Corriente Persona/Empresa:</label>
                             <input type="text" value="00-19283-09" class="w-full border border-gray-300 rounded-xl p-2.5 font-mono bg-white">
                         </div>
-                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] flex items-start gap-2">
-                            <i class="fa-solid fa-circle-info mt-0.5 text-amber-600"></i>
-                            <span>El débito se ejecutará automáticamente el día 20 de cada mes por el saldo facturado vencido sin comisión manual.</span>
+                    </div>
+
+                    <!-- FORMULARIO PAT (TARJETA CRÉDITO REGISTRO RECURRENTE REQUERIDO POR FELIPE) -->
+                    <div id="pat-form-content" class="hidden space-y-3 text-xs fade-in">
+                        <div>
+                            <label class="block font-bold text-gray-700 mb-1">Número de Tarjeta de Crédito:</label>
+                            <input type="text" placeholder="4500 •••• •••• 1289" value="4500 8920 1192 1289" class="w-full border border-gray-300 rounded-xl p-2.5 font-mono bg-white">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block font-bold text-gray-700 mb-1">Vencimiento:</label>
+                                <input type="text" placeholder="MM/AA" value="08/28" class="w-full border border-gray-300 rounded-xl p-2.5 font-mono bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-gray-700 mb-1">CVC / CVV:</label>
+                                <input type="password" placeholder="•••" value="892" class="w-full border border-gray-300 rounded-xl p-2.5 font-mono bg-white">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-gray-700 mb-1">Nombre del Titular:</label>
+                            <input type="text" value="BOTILLERIAS CLEBER SPA" class="w-full border border-gray-300 rounded-xl p-2.5 font-medium bg-white">
                         </div>
                     </div>
 
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] flex items-start gap-2">
+                        <i class="fa-solid fa-circle-info mt-0.5 text-amber-600"></i>
+                        <span>El débito recurrente se ejecutará automáticamente el día 20 de cada mes por el saldo facturado vencido.</span>
+                    </div>
+
                     <button onclick="confirmPacSubscription()" class="w-full bg-upago-blue hover:bg-upago-darkBlue text-white font-bold py-3.5 px-4 rounded-xl text-xs transition-all shadow-md">
-                        Autorizar Mandato PAC Día 20
+                        Autorizar Mandato Automático Día 20
                     </button>
                 </div>
             </div>
@@ -982,6 +1108,19 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // MOSTRAR/OCULTAR DETALLES DE PAGO EN MICARRO CCU
+        function toggleMicarroPaymentDetails(method) {
+            const cardForm = document.getElementById('micarro-card-form');
+            const bankBtns = document.getElementById('micarro-bank-buttons');
+
+            if (cardForm) cardForm.classList.toggle('hidden', method !== 'card');
+            if (bankBtns) bankBtns.classList.toggle('hidden', method !== 'transfer');
+        }
+
+        function selectBankDirect(bankName) {
+            showToast('Banco Seleccionado', `Procesando pago directo vía portal ${bankName}...`, 'fa-building-columns', 'blue');
+        }
+
         // LÓGICA DE CONTROLES + Y - EN MICARRO CCU
         function updateMicarroQty(delta) {
             if (delta < 0 && micarroQty === 1) {
@@ -1052,7 +1191,6 @@
             const iab = micarroQty * micarroValues.iab;
             const flete = micarroQty * micarroValues.flete;
 
-            // Actualizar elementos Paso 1
             const itemTotalTop = document.getElementById('micarro-item-total-top');
             if (itemTotalTop) itemTotalTop.innerText = '$' + total.toLocaleString('es-CL');
 
@@ -1074,7 +1212,6 @@
             const grandTotalEl = document.getElementById('micarro-total-val');
             if (grandTotalEl) grandTotalEl.innerText = '$' + total.toLocaleString('es-CL');
 
-            // Actualizar elementos Paso 3 (Resumen)
             const step3Subtotal = document.getElementById('micarro-step3-subtotal-val');
             if (step3Subtotal) step3Subtotal.innerText = '$' + subtotal.toLocaleString('es-CL');
 
@@ -1142,7 +1279,9 @@
             if (step === 3) {
                 const methodRadio = document.querySelector('input[name="micarro-payment-method"]:checked');
                 let labelText = "Crédito CRECCU";
-                if (methodRadio.value === 'transfer') labelText = "Transferencia Bancaria (UPAGO)";
+                if (methodRadio.value === 'wallet') labelText = "Saldo Wallet CCU";
+                else if (methodRadio.value === 'card') labelText = "Tarjeta de Crédito/Débito";
+                else if (methodRadio.value === 'transfer') labelText = "Transferencia / Botones Bancarios";
                 else if (methodRadio.value === 'contado') labelText = "Contado (Contra Entrega)";
                 document.getElementById('summary-payment-selected-label').innerText = labelText;
             }
@@ -1150,8 +1289,15 @@
 
         function confirmMicarroPurchase() {
             const finalTotal = micarroQty * micarroValues.unitPrice;
-            showToast('¡Compra Realizada!', `Pedido N°S1552286 procesado por $${finalTotal.toLocaleString('es-CL')}. Notificación Webhook enviada a SAP ERP.`, 'fa-circle-check', 'green');
-            addAuditRow("Pedido miCarro", "Crédito CRECCU", finalTotal);
+            const methodRadio = document.querySelector('input[name="micarro-payment-method"]:checked').value;
+            let methodText = "Crédito CRECCU";
+            if (methodRadio === 'wallet') methodText = "Saldo Wallet CCU";
+            else if (methodRadio === 'card') methodText = "Tarjeta Crédito/Débito (Trx Completa)";
+            else if (methodRadio === 'transfer') methodText = "Transferencia Simplificada (UPAGO)";
+            else if (methodRadio === 'contado') methodText = "Contado Contra Entrega";
+
+            showToast('¡Compra Realizada!', `Pedido N°S1552286 procesado por $${finalTotal.toLocaleString('es-CL')} vía ${methodText}.`, 'fa-circle-check', 'green');
+            addAuditRow("Pedido miCarro", methodText, finalTotal);
             setTimeout(() => goToMicarroStep(1), 2500);
         }
 
@@ -1166,6 +1312,11 @@
         function goToCreccuPayStep(step) {
             document.getElementById('creccu-pay-step-1').classList.toggle('hidden', step !== 1);
             document.getElementById('creccu-pay-step-2').classList.toggle('hidden', step !== 2);
+        }
+
+        function toggleCreccuPayMethodDetails(type) {
+            const cardForm = document.getElementById('creccu-card-form');
+            if (cardForm) cardForm.classList.toggle('hidden', type !== 'card');
         }
 
         function executeCreccuPaymentFinal() {
@@ -1187,13 +1338,35 @@
             document.getElementById('creccu-free-bar').style.width = (100 - pct) + '%';
         }
 
-        // MODAL PAC / PAT
+        // MODAL PAC / PAT (PAGO AUTOMÁTICO DÍA 20)
         function openPacSubscriptionModal() { document.getElementById('modal-pac-subscription').classList.remove('hidden'); }
         function closePacSubscriptionModal() { document.getElementById('modal-pac-subscription').classList.add('hidden'); }
+        
+        function switchPacPatTab(type) {
+            const pacBtn = document.getElementById('btn-tab-pac');
+            const patBtn = document.getElementById('btn-tab-pat');
+            const pacContent = document.getElementById('pac-form-content');
+            const patContent = document.getElementById('pat-form-content');
+
+            if (type === 'pac') {
+                pacBtn.className = "w-1/2 py-2 rounded-lg bg-white shadow-sm text-upago-blue";
+                patBtn.className = "w-1/2 py-2 rounded-lg text-gray-500 hover:text-gray-700";
+                pacContent.classList.remove('hidden');
+                patContent.classList.add('hidden');
+            } else {
+                patBtn.className = "w-1/2 py-2 rounded-lg bg-white shadow-sm text-upago-blue";
+                pacBtn.className = "w-1/2 py-2 rounded-lg text-gray-500 hover:text-gray-700";
+                patContent.classList.remove('hidden');
+                pacContent.classList.add('hidden');
+            }
+        }
+
         function confirmPacSubscription() {
             closePacSubscriptionModal();
-            showToast('PAC/PAT Activado', 'Suscripción registrada. Se debitará automáticamente el cupo utilizado los días 20 de cada mes.', 'fa-arrows-rotate', 'blue');
-            addAuditRow("Mandato PAC Día 20", "Débito Automático BancoChile", 233887);
+            const isPat = !document.getElementById('pat-form-content').classList.contains('hidden');
+            const modeText = isPat ? 'PAT (Tarjeta de Crédito)' : 'PAC (Cuenta Corriente)';
+            showToast('Mandato Registrado', `Suscripción ${modeText} activa. Se debitará automáticamente la deuda los días 20 de cada mes.`, 'fa-arrows-rotate', 'blue');
+            addAuditRow(`Mandato ${modeText} Día 20`, isPat ? "Débito Tarjeta Crédito" : "Débito Cta Cte BancoChile", 233887);
         }
 
         // REAJUSTE EPV LOGÍSTICA
