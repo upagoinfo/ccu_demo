@@ -305,16 +305,6 @@
                             <span class="font-bold text-gray-800 text-sm">Santander</span>
                         </label>
 
-                        <!-- OPCIÓN: SALDO WALLET (según doc de cambios) -->
-                        <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
-                            <input type="radio" name="micarro-payment-method" value="Saldo Wallet CreCCU" onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal">
-                            <i class="fa-solid fa-wallet text-ccu-teal text-base"></i>
-                            <div>
-                                <span class="font-bold text-gray-800 text-sm block">Saldo Wallet CreCCU</span>
-                                <span class="text-[11px] text-emerald-700 font-semibold block">Saldo disponible $5.954</span>
-                            </div>
-                        </label>
-
                         <!-- OPCIÓN: TARJETA DE CRÉDITO/DÉBITO (TRX COMPLETA + GUARDADAS) -->
                         <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
                             <input type="radio" name="micarro-payment-method" value="card" onchange="togglePayCardForm('micarro', true); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal">
