@@ -245,6 +245,11 @@
 
                 <!-- PASO 2: SELECCIÓN MÉTODO DE PAGO (MicarroCCU_selección forma de pago.webp) -->
                 <div id="micarro-step-2" class="hidden space-y-4">
+                    <div class="flex items-center gap-2">
+                        <button onclick="goToMicarroStep(1)" class="text-gray-400 hover:text-ccu-teal text-xs font-bold flex items-center gap-1 transition-all">
+                            <i class="fa-solid fa-arrow-left-long"></i> Volver
+                        </button>
+                    </div>
                     <h3 class="font-bold text-base text-gray-800">Seleccione método de pago</h3>
 
                     <div class="space-y-3">
@@ -388,6 +393,11 @@
 
                 <!-- PASO 3: RESUMEN FINAL ANTES DE CONFIRMAR (MicarroCCU_paso final resumen antes de confirmar compra.webp) -->
                 <div id="micarro-step-3" class="hidden space-y-4">
+                    <div class="flex items-center gap-2">
+                        <button onclick="goToMicarroStep(2)" class="text-gray-400 hover:text-ccu-teal text-xs font-bold flex items-center gap-1 transition-all">
+                            <i class="fa-solid fa-arrow-left-long"></i> Volver
+                        </button>
+                    </div>
                     <h3 class="font-bold text-base text-gray-800">Resumen de compra</h3>
 
                     <!-- GRID DESPACHO Y PAGO -->
@@ -863,6 +873,72 @@
 
             </div>
 
+            <!-- COBRO CONTRA ENTREGA EN TERRENO (PLUS UPAGO — no solicitado en el brief, respuesta al intercambio Felipe/Jorge) -->
+            <div class="bg-white rounded-2xl shadow-sm border-2 border-amber-300 overflow-hidden">
+                <button onclick="toggleEpvCobroAccordion()" class="w-full flex justify-between items-center gap-2 p-5 text-left">
+                    <div class="flex items-center gap-3">
+                        <i id="epv-cobro-accordion-chevron" class="fa-solid fa-chevron-right text-amber-500 text-xs transition-transform"></i>
+                        <div>
+                            <h4 class="font-bold text-sm text-gray-900">Otros Medios de Pago en la EPV</h4>
+                            <p class="text-[11px] text-gray-500 mt-0.5">Tarjeta y transferencia disponibles al momento de la entrega, además de efectivo y sus ajustes.</p>
+                        </div>
+                    </div>
+                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0">Plus UPAGO</span>
+                </button>
+
+                <div id="epv-cobro-accordion-body" class="hidden px-5 pb-5 space-y-4 border-t border-amber-100 pt-4">
+                    <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider block">Pedido N°S1552291 · Contado (Contra Entrega)</span>
+
+                    <div class="bg-gray-50 rounded-xl p-4 flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-600">Monto a cobrar</span>
+                        <span class="text-xl font-black text-gray-900">$64.200</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 text-xs">
+                        <button id="epv-cobro-btn-efectivo" onclick="selectEpvCobroMethod('efectivo')" class="border-2 border-upago-blue bg-upago-blue/5 p-3 rounded-xl flex flex-col items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-money-bill text-upago-blue text-lg"></i>
+                            <span class="font-bold text-upago-dark">Efectivo</span>
+                        </button>
+                        <button id="epv-cobro-btn-tarjeta" onclick="selectEpvCobroMethod('tarjeta')" class="border p-3 rounded-xl flex flex-col items-center gap-1.5 hover:border-gray-300 bg-white transition-all">
+                            <i class="fa-solid fa-credit-card text-gray-500 text-lg"></i>
+                            <span class="font-bold text-gray-700">Tarjeta</span>
+                        </button>
+                        <button id="epv-cobro-btn-transferencia" onclick="selectEpvCobroMethod('transferencia')" class="border p-3 rounded-xl flex flex-col items-center gap-1.5 hover:border-gray-300 bg-white transition-all">
+                            <i class="fa-solid fa-bolt text-gray-500 text-lg"></i>
+                            <span class="font-bold text-gray-700">Transferencia</span>
+                        </button>
+                    </div>
+
+                    <!-- PANEL EFECTIVO -->
+                    <div id="epv-cobro-panel-efectivo" class="bg-upago-blue/5 border border-upago-blue/20 rounded-xl p-4 text-xs space-y-2">
+                        <p class="text-gray-700">El transportista recibe el efectivo y confirma la recepción manualmente en la EPV.</p>
+                        <button onclick="confirmEpvCobro('efectivo')" class="w-full bg-ccu-actionGreen hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition-all">Confirmar Recepción de Efectivo</button>
+                    </div>
+
+                    <!-- PANEL TARJETA (LECTOR SIMULADO) -->
+                    <div id="epv-cobro-panel-tarjeta" class="hidden bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs space-y-3 text-center">
+                        <i class="fa-solid fa-credit-card text-3xl text-gray-400"></i>
+                        <p class="font-bold text-gray-700">Inserte, deslice o acerque la tarjeta al lector de la EPV</p>
+                        <p class="text-[11px] text-gray-500">Conexión directa con la pasarela UPAGO — tokenización PCI DSS.</p>
+                        <button onclick="confirmEpvCobro('tarjeta')" class="w-full bg-ccu-actionGreen hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition-all">Simular Aprobación de Tarjeta</button>
+                    </div>
+
+                    <!-- PANEL TRANSFERENCIA (QR / DATOS) -->
+                    <div id="epv-cobro-panel-transferencia" class="hidden bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs space-y-3">
+                        <div class="flex items-center gap-4">
+                            <div class="w-20 h-20 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-qrcode text-4xl text-gray-700"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-700">El cliente escanea el QR o transfiere a la cuenta UPAGO en pantalla</p>
+                                <p class="text-[11px] text-gray-500 mt-1">Conciliación automática al confirmar el abono en la cuenta recaudadora.</p>
+                            </div>
+                        </div>
+                        <button onclick="confirmEpvCobro('transferencia')" class="w-full bg-ccu-actionGreen hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition-all">Confirmar Transferencia Recibida</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- SIMULADOR DE ENTREGA EN RUTA & REAJUSTE -->
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 space-y-5">
                 <div class="flex justify-between items-center border-b pb-3">
@@ -1138,6 +1214,28 @@
 
     </main>
 
+    <!-- MODAL RECIBO DE ÉXITO (GLOBAL — visible sin importar la vista/pestaña activa) -->
+    <div id="modal-success-receipt" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden fade-in">
+        <div class="bg-white rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden">
+            <div id="success-receipt-header" class="bg-ccu-actionGreen p-6 text-center space-y-2">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                        <i id="success-receipt-icon" class="fa-solid fa-check text-ccu-actionGreen text-2xl"></i>
+                    </div>
+                </div>
+                <h3 id="success-receipt-title" class="text-lg font-black text-white">¡Operación Exitosa!</h3>
+                <p id="success-receipt-subtitle" class="text-xs text-white/90"></p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div id="success-receipt-details" class="space-y-2 text-xs border-2 border-dashed border-gray-200 rounded-xl p-4"></div>
+                <p id="success-receipt-footnote" class="text-[11px] text-gray-400 text-center leading-relaxed"></p>
+                <button onclick="closeSuccessReceipt()" class="w-full bg-upago-dark hover:bg-black text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-all">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER TÉCNICO B2B -->
     <footer class="bg-upago-dark text-gray-400 py-6 px-4 text-xs border-t border-gray-800 mt-auto">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
@@ -1241,6 +1339,34 @@
                 <button onclick="this.closest('.toast').remove()" class="text-gray-300 hover:text-gray-500"><i class="fa-solid fa-xmark text-xs"></i></button>`;
             document.getElementById('toast-container').appendChild(el);
             setTimeout(() => el.remove(), 5000);
+        }
+
+        // RECIBO DE ÉXITO PROMINENTE — para operaciones importantes que el cliente
+        // necesita ver con claridad (pagos, abonos, retiros, mandatos), a diferencia
+        // del toast discreto que se reserva para avisos menores.
+        let successReceiptOnClose = null;
+        function showSuccessReceipt({ title, subtitle, details, footnote, icon, tone, onClose }) {
+            tone = tone || 'green';
+            successReceiptOnClose = onClose || null;
+            const toneBg = { green: 'bg-ccu-actionGreen', blue: 'bg-upago-blue', teal: 'bg-ccu-teal' }[tone] || 'bg-ccu-actionGreen';
+            const toneText = { green: 'text-ccu-actionGreen', blue: 'text-upago-blue', teal: 'text-ccu-teal' }[tone] || 'text-ccu-actionGreen';
+
+            document.getElementById('success-receipt-header').className = toneBg + ' p-6 text-center space-y-2';
+            document.getElementById('success-receipt-icon').className = 'fa-solid ' + (icon || 'fa-check') + ' ' + toneText + ' text-2xl';
+            document.getElementById('success-receipt-title').innerText = title;
+            document.getElementById('success-receipt-subtitle').innerText = subtitle || '';
+
+            const detailsBox = document.getElementById('success-receipt-details');
+            detailsBox.innerHTML = (details || []).map(d =>
+                `<div class="flex justify-between items-center"><span class="text-gray-500">${d.label}</span><strong class="${d.strong ? 'text-base ' + toneText : 'text-gray-800'}">${d.value}</strong></div>`
+            ).join('');
+
+            document.getElementById('success-receipt-footnote').innerText = footnote || '';
+            document.getElementById('modal-success-receipt').classList.remove('hidden');
+        }
+        function closeSuccessReceipt() {
+            document.getElementById('modal-success-receipt').classList.add('hidden');
+            if (successReceiptOnClose) { successReceiptOnClose(); successReceiptOnClose = null; }
         }
 
         // CAMBIO DE VISTAS (4 PLATAFORMAS)
@@ -1456,9 +1582,20 @@
             const finalTotal = micarroQty * micarroValues.unitPrice;
             const methodRadio = document.querySelector('input[name="micarro-payment-method"]:checked');
             const methodLabel = document.getElementById('summary-payment-selected-label').innerText || methodRadio.value;
-            showToast('¡Compra Realizada!', `Pedido N°S1552286 procesado por $${finalTotal.toLocaleString('es-CL')}. Notificación Webhook enviada a SAP ERP.`, 'fa-circle-check', 'green');
+            showSuccessReceipt({
+                title: '¡Compra Realizada!',
+                subtitle: 'Tu pedido fue procesado correctamente',
+                icon: 'fa-check',
+                tone: 'green',
+                details: [
+                    { label: 'N° de Pedido', value: 'S1552286' },
+                    { label: 'Medio de pago', value: methodLabel },
+                    { label: 'Monto total', value: '$' + finalTotal.toLocaleString('es-CL'), strong: true },
+                ],
+                footnote: 'Notificación Webhook enviada a SAP ERP. Tu pedido ya quedó registrado.',
+                onClose: () => goToMicarroStep(1),
+            });
             addAuditRow("Pedido miCarro", methodLabel, finalTotal);
-            setTimeout(() => goToMicarroStep(1), 2500);
         }
 
         // FLUJO CRECCU
@@ -1516,9 +1653,20 @@
         function executeCreccuPaymentFinal() {
             closeCreccuPayModal();
             const bank = document.querySelector('input[name="creccu-bank-choice"]:checked').value;
-            let toastMsg = `Pago de $922.122 procesado vía ${bank}. Cupo de crédito liberado en tiempo real en SAP.`;
-            if (bank === 'Saldo Wallet CreCCU') toastMsg = `Pago de $922.122 abonado desde tu Saldo Wallet CreCCU. Cupo de crédito liberado en tiempo real en SAP.`;
-            showToast('¡Abono Recibido!', toastMsg, 'fa-circle-check', 'green');
+            const viaWallet = bank === 'Saldo Wallet CreCCU';
+            showSuccessReceipt({
+                title: '¡Abono Recibido!',
+                subtitle: 'Tu pago fue confirmado en tiempo real',
+                icon: 'fa-check',
+                tone: 'green',
+                details: [
+                    { label: 'Medio de pago', value: bank },
+                    { label: 'Monto abonado', value: '$922.122', strong: true },
+                ],
+                footnote: viaWallet
+                    ? 'Abonado desde tu Saldo Wallet CreCCU. Cupo de crédito liberado en tiempo real en SAP.'
+                    : 'Cupo de crédito liberado en tiempo real en SAP.',
+            });
 
             creccuUsed = 0;
             updateCreccuBars();
@@ -1544,7 +1692,17 @@
         function closeWalletWithdrawModal() { document.getElementById('modal-wallet-withdraw').classList.add('hidden'); }
         function confirmWalletWithdraw() {
             closeWalletWithdrawModal();
-            showToast('Transferencia Enviada', 'Se transfirieron $5.954 desde tu Wallet CreCCU a tu cuenta personal registrada. Disponible en minutos.', 'fa-circle-check', 'green');
+            showSuccessReceipt({
+                title: '¡Transferencia Enviada!',
+                subtitle: 'Tu retiro fue procesado correctamente',
+                icon: 'fa-money-bill-transfer',
+                tone: 'teal',
+                details: [
+                    { label: 'Cuenta de destino', value: 'Banco de Chile ••09' },
+                    { label: 'Monto transferido', value: '$5.954', strong: true },
+                ],
+                footnote: 'Disponible en tu cuenta personal en minutos.',
+            });
             addAuditRow("Retiro Wallet a Cta. Personal", "Transferencia Inmediata", -5954);
         }
 
@@ -1566,15 +1724,82 @@
         function confirmPacSubscription() {
             closePacSubscriptionModal();
             if (pacPatActiveTab === 'pat') {
-                showToast('PAT Activado', 'Tarjeta registrada. Se cargará automáticamente el cupo utilizado los días 20 de cada mes.', 'fa-arrows-rotate', 'blue');
+                showSuccessReceipt({
+                    title: '¡PAT Activado!',
+                    subtitle: 'Tu tarjeta quedó registrada para cobro automático',
+                    icon: 'fa-arrows-rotate',
+                    tone: 'blue',
+                    details: [
+                        { label: 'Medio registrado', value: 'Cargo Automático Tarjeta' },
+                        { label: 'Fecha de cobro', value: 'Día 20 de cada mes', strong: true },
+                    ],
+                    footnote: 'Se cargará automáticamente el cupo utilizado los días 20 de cada mes.',
+                });
                 addAuditRow("Mandato PAT Día 20", "Cargo Automático Tarjeta", 233887);
             } else {
-                showToast('PAC Activado', 'Cuenta bancaria registrada. Se debitará automáticamente el cupo utilizado los días 20 de cada mes.', 'fa-arrows-rotate', 'blue');
+                showSuccessReceipt({
+                    title: '¡PAC Activado!',
+                    subtitle: 'Tu cuenta quedó registrada para débito automático',
+                    icon: 'fa-arrows-rotate',
+                    tone: 'blue',
+                    details: [
+                        { label: 'Medio registrado', value: 'Débito Automático BancoChile' },
+                        { label: 'Fecha de cobro', value: 'Día 20 de cada mes', strong: true },
+                    ],
+                    footnote: 'Se debitará automáticamente el cupo utilizado los días 20 de cada mes.',
+                });
                 addAuditRow("Mandato PAC Día 20", "Débito Automático BancoChile", 233887);
             }
         }
 
         // REAJUSTE EPV LOGÍSTICA
+        // ACORDEÓN DEL COBRO CONTRA ENTREGA EN TERRENO (PLUS UPAGO) — colapsado por defecto para no competir con el flujo principal
+        function toggleEpvCobroAccordion() {
+            const body = document.getElementById('epv-cobro-accordion-body');
+            const chevron = document.getElementById('epv-cobro-accordion-chevron');
+            const isOpen = !body.classList.contains('hidden');
+            body.classList.toggle('hidden', isOpen);
+            chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+        }
+
+        // COBRO CONTRA ENTREGA EN TERRENO (PLUS UPAGO) — el transportista elige el medio con el que el cliente paga en el momento
+        function selectEpvCobroMethod(method) {
+            const ACTIVE = "border-2 border-upago-blue bg-upago-blue/5 p-3 rounded-xl flex flex-col items-center gap-1.5 transition-all";
+            const IDLE = "border p-3 rounded-xl flex flex-col items-center gap-1.5 hover:border-gray-300 bg-white transition-all";
+            ['efectivo', 'tarjeta', 'transferencia'].forEach(m => {
+                const btn = document.getElementById('epv-cobro-btn-' + m);
+                const icon = btn.querySelector('i');
+                const label = btn.querySelector('span');
+                document.getElementById('epv-cobro-panel-' + m).classList.toggle('hidden', m !== method);
+                if (m === method) {
+                    btn.className = ACTIVE;
+                    icon.className = icon.className.replace('text-gray-500', 'text-upago-blue');
+                    label.className = 'font-bold text-upago-dark';
+                } else {
+                    btn.className = IDLE;
+                    icon.className = icon.className.replace('text-upago-blue', 'text-gray-500');
+                    label.className = 'font-bold text-gray-700';
+                }
+            });
+        }
+
+        function confirmEpvCobro(method) {
+            const labels = { efectivo: 'Efectivo', tarjeta: 'Tarjeta (EPV)', transferencia: 'Transferencia (EPV)' };
+            showSuccessReceipt({
+                title: '¡Cobro Confirmado!',
+                subtitle: 'El pago quedó registrado en terreno',
+                icon: 'fa-truck-fast',
+                tone: 'green',
+                details: [
+                    { label: 'Pedido', value: 'N°S1552291' },
+                    { label: 'Medio de pago', value: labels[method] },
+                    { label: 'Monto cobrado', value: '$64.200', strong: true },
+                ],
+                footnote: 'Sincronizado con SAP ERP. El transportista puede continuar la ruta.',
+            });
+            addAuditRow("Contado (Contra Entrega EPV)", labels[method], 64200);
+        }
+
         function adjustEpvItem(delta) {
             epvQty = Math.max(0, epvQty + delta);
             document.getElementById('epv-qty').innerText = epvQty;
