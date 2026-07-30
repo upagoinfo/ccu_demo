@@ -248,6 +248,24 @@
                     <h3 class="font-bold text-base text-gray-800">Seleccione método de pago</h3>
 
                     <div class="space-y-3">
+                        <!-- OPCIÓN: USAR CRÉDITO CRECCU DISPONIBLE (restituida — nunca se pidió eliminarla) -->
+                        <label class="border-2 border-ccu-teal bg-ccu-mintBg p-4 rounded-2xl flex items-center justify-between cursor-pointer shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="micarro-payment-method" value="Usar mi Crédito CRECCU disponible" onchange="togglePayCardForm('micarro', false)" class="text-ccu-teal text-lg">
+                                <div>
+                                    <span class="font-bold text-sm block text-gray-900">Usar mi Crédito CRECCU disponible</span>
+                                    <span class="text-xs text-emerald-700 font-semibold block">Monto disponible $520.018</span>
+                                </div>
+                            </div>
+                            <span class="bg-ccu-teal text-white text-[10px] font-bold px-2.5 py-1 rounded-full">Cupo Aprobado</span>
+                        </label>
+
+                        <!-- CHECKBOX: COMBINAR SALDO WALLET CON EL MEDIO DE PAGO ELEGIDO -->
+                        <label class="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs cursor-pointer">
+                            <input type="checkbox" id="chk-combine-wallet-micarro" onchange="showToast(this.checked ? 'Wallet combinada' : 'Wallet desactivada', this.checked ? 'Se descontarán $5.954 de tu Saldo Wallet CreCCU sobre el medio de pago elegido.' : 'Ya no se usará el Saldo Wallet en este pago.', 'fa-wallet', 'blue')" class="mt-0.5 rounded border-amber-300 text-ccu-teal focus:ring-ccu-teal">
+                            <span class="text-amber-900"><strong>Usar también mi Saldo Wallet CreCCU disponible ($5.954)</strong> para completar este pago, junto al medio que selecciones abajo.</span>
+                        </label>
+
                         <!-- OPCIÓN 1: TRANSFERENCIA BANCARIA (UPAGO INTEGRADO) -->
                         <label class="border-2 border-upago-blue bg-upago-blue/5 p-4 rounded-2xl flex items-center justify-between cursor-pointer shadow-sm">
                             <div class="flex items-center gap-3">
@@ -319,6 +337,10 @@
                             </div>
 
                             <div id="card-tab-saved-micarro" class="hidden space-y-2">
+                                <label class="flex items-center gap-2 text-[11px] text-gray-400 pb-1 cursor-not-allowed">
+                                    <input type="checkbox" disabled class="rounded border-gray-300">
+                                    Pagar con 2 tarjetas <span class="bg-gray-100 text-gray-500 text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-1">Próximamente</span>
+                                </label>
                                 <label class="p-2.5 border-2 border-ccu-teal bg-white rounded-lg flex items-center gap-2.5 cursor-pointer">
                                     <input type="radio" name="micarro-saved-card" checked class="text-ccu-teal">
                                     <i class="fa-brands fa-cc-visa text-upago-blue text-lg"></i>
@@ -449,8 +471,15 @@
 
                 <!-- CONTENIDO: WALLET (SALDO A FAVOR POR AJUSTES/MERMAS) -->
                 <div id="creccu-home-tab-wallet" class="hidden">
-                    <span class="text-xs text-teal-100 block">Saldo Wallet disponible</span>
-                    <span class="text-3xl font-black text-white">$5.954</span>
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div>
+                            <span class="text-xs text-teal-100 block">Saldo Wallet disponible</span>
+                            <span class="text-3xl font-black text-white">$5.954</span>
+                        </div>
+                        <button onclick="openWalletWithdrawModal()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold py-2 px-3 rounded-xl text-[11px] transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-money-bill-transfer text-amber-300"></i> Retirar dinero a mi cuenta personal
+                        </button>
+                    </div>
                     <p class="text-[11px] text-teal-100 mt-2 leading-relaxed">Saldo a favor generado por ajustes de mermas o quiebres de stock en entregas. Se puede usar como medio de pago o transferir vía Payout.</p>
                     <div class="grid grid-cols-2 gap-2 mt-3">
                         <div class="bg-teal-900/40 rounded-xl p-2.5 text-center">
@@ -464,8 +493,8 @@
                     </div>
                 </div>
 
-                <!-- ACCIONES PORTAL CRECCU -->
-                <div class="grid grid-cols-3 gap-2 pt-2">
+                <!-- ACCIONES PORTAL CRECCU (propias de la línea de crédito — se ocultan en la pestaña Wallet) -->
+                <div id="creccu-actions-row" class="grid grid-cols-3 gap-2 pt-2">
                     <button onclick="showToast('Estado de Cuenta', 'Descargando cartola consolidada desde SAP ERP...', 'fa-file-pdf', 'blue')" class="border border-teal-300/40 hover:bg-teal-700/50 text-white font-bold py-2.5 px-3 rounded-xl text-xs transition-all">
                         Estado de cuenta
                     </button>
@@ -698,6 +727,39 @@
                 </div>
             </div>
 
+            <!-- MODAL RETIRO WALLET A CUENTA PERSONAL -->
+            <div id="modal-wallet-withdraw" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
+                <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-money-bill-transfer text-ccu-teal text-base"></i>
+                            <h3 class="text-sm font-bold text-gray-800">Retirar Saldo Wallet a Cuenta Personal</h3>
+                        </div>
+                        <button onclick="closeWalletWithdrawModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+
+                    <div class="bg-ccu-mintBg border border-ccu-teal/20 rounded-xl p-3.5 text-center">
+                        <span class="text-xs text-gray-500 block">Monto a transferir</span>
+                        <span class="text-2xl font-black text-ccu-teal">$5.954</span>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <p class="font-bold text-gray-700">Cuenta de destino registrada:</p>
+                        <div class="border border-gray-200 rounded-xl p-3.5 bg-gray-50 space-y-1.5">
+                            <div class="flex justify-between"><span class="text-gray-500">Titular</span><strong class="text-gray-800">Botillerías Cleber SPA</strong></div>
+                            <div class="flex justify-between"><span class="text-gray-500">RUT</span><strong class="text-gray-800 font-mono">76.452.110-K</strong></div>
+                            <div class="flex justify-between"><span class="text-gray-500">Banco</span><strong class="text-gray-800">Banco de Chile</strong></div>
+                            <div class="flex justify-between"><span class="text-gray-500">Tipo de cuenta</span><strong class="text-gray-800">Cuenta Corriente</strong></div>
+                            <div class="flex justify-between"><span class="text-gray-500">N° de cuenta</span><strong class="text-gray-800 font-mono">00-19283-09</strong></div>
+                        </div>
+                    </div>
+
+                    <button onclick="confirmWalletWithdraw()" class="w-full bg-ccu-teal hover:bg-teal-700 text-white font-bold py-3.5 px-4 rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Realizar Envío Transferencia Inmediata
+                    </button>
+                </div>
+            </div>
+
             <!-- MODAL SUSCRIPCIÓN PAC / PAT -->
             <div id="modal-pac-subscription" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden fade-in">
                 <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
@@ -791,6 +853,14 @@
                 <p class="text-xs text-gray-300 leading-relaxed">
                     UPAGO se conecta con las máquinas portátiles existentes de los transportistas de CCU. Al entregar el pedido, cualquier reajuste por merma genera un <strong>Payout inmediato</strong> o abono en la <strong>Wallet del cliente</strong>, actualizando la deuda en SAP sin firmas ni aprobaciones manuales.
                 </p>
+                <div class="flex items-center gap-2 flex-wrap pt-1">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase">Medios aceptados en EPV:</span>
+                    <span class="bg-white/10 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-money-bill"></i>Efectivo</span>
+                    <span class="bg-white/10 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-credit-card"></i>Tarjeta</span>
+                    <span class="bg-white/10 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-bolt"></i>Transferencia</span>
+                    <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">Plus UPAGO — no solicitado en brief</span>
+                </div>
+
             </div>
 
             <!-- SIMULADOR DE ENTREGA EN RUTA & REAJUSTE -->
@@ -833,19 +903,26 @@
                 <!-- OPCIONES DE TRATAMIENTO DEL REAJUSTE -->
                 <div id="epv-treatment-options" class="space-y-2">
                     <label class="block text-xs font-bold text-gray-700">Destino del Saldo a Favor por Merma:</label>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <label class="border-2 border-upago-blue bg-upago-blue/5 p-3 rounded-xl flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="epv-refund-dest" value="wallet" checked class="text-upago-blue">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                        <label id="epv-dest-label-wallet" class="border-2 border-upago-blue bg-upago-blue/5 p-3 rounded-xl flex items-center gap-2 cursor-pointer transition-all">
+                            <input type="radio" name="epv-refund-dest" value="wallet" checked onchange="highlightEpvDest('wallet')" class="text-upago-blue">
                             <div>
-                                <strong class="block text-upago-dark">Abonar a Wallet CreCCU</strong>
-                                <span class="text-[10px] text-gray-500">Saldo a favor automático en la línea</span>
+                                <strong class="block text-upago-dark">Abonar a Wallet cliente CRECCU</strong>
+                                <span class="text-[10px] text-gray-500">Saldo a favor automático en wallet cliente asociado al pedido</span>
                             </div>
                         </label>
-                        <label class="border p-3 rounded-xl flex items-center gap-2 cursor-pointer hover:border-gray-300 bg-white">
-                            <input type="radio" name="epv-refund-dest" value="payout" class="text-upago-blue">
+                        <label id="epv-dest-label-creccu" class="border p-3 rounded-xl flex items-center gap-2 cursor-pointer hover:border-gray-300 bg-white transition-all">
+                            <input type="radio" name="epv-refund-dest" value="creccu" onchange="highlightEpvDest('creccu')" class="text-upago-blue">
+                            <div>
+                                <strong class="block text-gray-800">Abonar a Crédito CRECCU utilizado</strong>
+                                <span class="text-[10px] text-gray-500">Reduce el cupo de crédito utilizado del cliente</span>
+                            </div>
+                        </label>
+                        <label id="epv-dest-label-payout" class="border p-3 rounded-xl flex items-center gap-2 cursor-pointer hover:border-gray-300 bg-white transition-all">
+                            <input type="radio" name="epv-refund-dest" value="payout" onchange="highlightEpvDest('payout')" class="text-upago-blue">
                             <div>
                                 <strong class="block text-gray-800">Payout Directo (TEF)</strong>
-                                <span class="text-[10px] text-gray-500">Devolución inmediata a la cuenta</span>
+                                <span class="text-[10px] text-gray-500">Devolución inmediata a la cuenta del cliente asociado al pedido</span>
                             </div>
                         </label>
                     </div>
@@ -1307,6 +1384,7 @@
         function switchCreccuHomeTab(tab) {
             document.getElementById('creccu-home-tab-credito').classList.toggle('hidden', tab !== 'credito');
             document.getElementById('creccu-home-tab-wallet').classList.toggle('hidden', tab !== 'wallet');
+            document.getElementById('creccu-actions-row').classList.toggle('hidden', tab === 'wallet');
             document.getElementById('tab-btn-credito').className = tab === 'credito'
                 ? 'py-2 rounded-lg bg-white text-ccu-teal shadow-sm transition-all'
                 : 'py-2 rounded-lg text-teal-100 transition-all';
@@ -1364,8 +1442,12 @@
                 let labelText = "Transferencia Bancaria (UPAGO)";
                 if (methodRadio.value === 'contado') labelText = "Contado (Contra Entrega)";
                 else if (methodRadio.value === 'card') labelText = "Tarjeta de Crédito/Débito";
+                else if (methodRadio.value === 'Usar mi Crédito CRECCU disponible') labelText = "Crédito CRECCU disponible";
                 else if (methodRadio.value === 'Saldo Wallet CreCCU') labelText = "Saldo Wallet CreCCU";
                 else if (methodRadio.value !== 'transfer') labelText = "Botón Bancario (" + methodRadio.value + ")";
+                if (document.getElementById('chk-combine-wallet-micarro') && document.getElementById('chk-combine-wallet-micarro').checked && methodRadio.value !== 'Saldo Wallet CreCCU') {
+                    labelText += " + Wallet ($5.954)";
+                }
                 document.getElementById('summary-payment-selected-label').innerText = labelText;
             }
         }
@@ -1436,6 +1518,15 @@
         function closePacSubscriptionModal() { document.getElementById('modal-pac-subscription').classList.add('hidden'); }
 
         let pacPatActiveTab = 'pac';
+        // MODAL RETIRO WALLET A CUENTA PERSONAL
+        function openWalletWithdrawModal() { document.getElementById('modal-wallet-withdraw').classList.remove('hidden'); }
+        function closeWalletWithdrawModal() { document.getElementById('modal-wallet-withdraw').classList.add('hidden'); }
+        function confirmWalletWithdraw() {
+            closeWalletWithdrawModal();
+            showToast('Transferencia Enviada', 'Se transfirieron $5.954 desde tu Wallet CreCCU a tu cuenta personal registrada. Disponible en minutos.', 'fa-circle-check', 'green');
+            addAuditRow("Retiro Wallet a Cta. Personal", "Transferencia Inmediata", -5954);
+        }
+
         function switchPacPatTab(tab) {
             pacPatActiveTab = tab;
             document.getElementById('pac-tab-content').classList.toggle('hidden', tab !== 'pac');
@@ -1472,15 +1563,33 @@
             document.getElementById('epv-refund-amount').innerText = '-$' + refund.toLocaleString('es-CL');
         }
 
+        // RESALTA VISUALMENTE LA OPCIÓN DE DESTINO DEL REAJUSTE REALMENTE SELECCIONADA
+        function highlightEpvDest(selected) {
+            const SELECTED_CLASS = "border-2 border-upago-blue bg-upago-blue/5 p-3 rounded-xl flex items-center gap-2 cursor-pointer transition-all";
+            const IDLE_CLASS = "border p-3 rounded-xl flex items-center gap-2 cursor-pointer hover:border-gray-300 bg-white transition-all";
+            ['wallet', 'creccu', 'payout'].forEach(key => {
+                const label = document.getElementById('epv-dest-label-' + key);
+                const strong = label.querySelector('strong');
+                if (key === selected) {
+                    label.className = SELECTED_CLASS;
+                    strong.className = "block text-upago-dark";
+                } else {
+                    label.className = IDLE_CLASS;
+                    strong.className = "block text-gray-800";
+                }
+            });
+        }
+
         function executeEpvSync() {
             const dest = document.querySelector('input[name="epv-refund-dest"]:checked').value;
             const statusBadge = document.getElementById('epv-status-badge');
             statusBadge.className = "bg-emerald-100 text-emerald-800 text-[11px] font-bold px-3 py-1 rounded-full";
             statusBadge.innerText = "Reajuste Sincronizado en EPV y SAP";
 
+            const destLabel = dest === 'wallet' ? 'Wallet cliente CRECCU' : dest === 'creccu' ? 'Crédito CRECCU utilizado' : 'Payout TEF';
             const diff = itemUnitPrice - (epvQty * itemUnitPrice);
-            showToast('Sincronizado con EPV CCU', `Reajuste enviado a máquina EPV. Saldo abonado a ${dest === 'wallet' ? 'Wallet CreCCU' : 'Payout TEF'}.`, 'fa-truck-fast', 'green');
-            addAuditRow("Reajuste EPV", dest === 'wallet' ? "Wallet CreCCU" : "Payout Directo", diff);
+            showToast('Sincronizado con EPV CCU', `Reajuste enviado a máquina EPV. Saldo abonado a ${destLabel}.`, 'fa-truck-fast', 'green');
+            addAuditRow("Reajuste EPV", destLabel, diff);
         }
 
         // AUDITORÍA Y AGREGADO DINÁMICO DE FILAS CON CONTADOR SCROLL
