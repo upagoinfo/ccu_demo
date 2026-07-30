@@ -251,7 +251,7 @@
                         <!-- OPCIÓN: USAR CRÉDITO CRECCU DISPONIBLE (restituida — nunca se pidió eliminarla) -->
                         <label class="border-2 border-ccu-teal bg-ccu-mintBg p-4 rounded-2xl flex items-center justify-between cursor-pointer shadow-sm">
                             <div class="flex items-center gap-3">
-                                <input type="radio" name="micarro-payment-method" value="Usar mi Crédito CRECCU disponible" onchange="togglePayCardForm('micarro', false)" class="text-ccu-teal text-lg">
+                                <input type="radio" name="micarro-payment-method" value="Usar mi Crédito CRECCU disponible" onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal text-lg">
                                 <div>
                                     <span class="font-bold text-sm block text-gray-900">Usar mi Crédito CRECCU disponible</span>
                                     <span class="text-xs text-emerald-700 font-semibold block">Monto disponible $520.018</span>
@@ -261,15 +261,15 @@
                         </label>
 
                         <!-- CHECKBOX: COMBINAR SALDO WALLET CON EL MEDIO DE PAGO ELEGIDO -->
-                        <label class="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs cursor-pointer">
+                        <label id="label-combine-wallet-micarro" class="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs cursor-pointer transition-all">
                             <input type="checkbox" id="chk-combine-wallet-micarro" onchange="showToast(this.checked ? 'Wallet combinada' : 'Wallet desactivada', this.checked ? 'Se descontarán $5.954 de tu Saldo Wallet CreCCU sobre el medio de pago elegido.' : 'Ya no se usará el Saldo Wallet en este pago.', 'fa-wallet', 'blue')" class="mt-0.5 rounded border-amber-300 text-ccu-teal focus:ring-ccu-teal">
-                            <span class="text-amber-900"><strong>Usar también mi Saldo Wallet CreCCU disponible ($5.954)</strong> para completar este pago, junto al medio que selecciones abajo.</span>
+                            <span id="label-combine-wallet-text" class="text-amber-900"><strong>Usar también mi Saldo Wallet CreCCU disponible ($5.954)</strong> para completar este pago, junto al medio que selecciones abajo.</span>
                         </label>
 
                         <!-- OPCIÓN 1: TRANSFERENCIA BANCARIA (UPAGO INTEGRADO) -->
                         <label class="border-2 border-upago-blue bg-upago-blue/5 p-4 rounded-2xl flex items-center justify-between cursor-pointer shadow-sm">
                             <div class="flex items-center gap-3">
-                                <input type="radio" name="micarro-payment-method" value="transfer" checked onchange="togglePayCardForm('micarro', false)" class="text-upago-blue text-lg">
+                                <input type="radio" name="micarro-payment-method" value="transfer" checked onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-upago-blue text-lg">
                                 <div>
                                     <span class="font-bold text-sm block text-gray-900">Transferencia Bancaria</span>
                                     <span class="text-xs text-gray-500 block">Transferencia Simplificada (UPAGO)</span>
@@ -280,29 +280,29 @@
 
                         <!-- OPCIÓN: BOTONES DE PAGO BANCOS -->
                         <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
-                            <input type="radio" name="micarro-payment-method" value="Banco de Chile" onchange="togglePayCardForm('micarro', false)" class="text-ccu-teal">
+                            <input type="radio" name="micarro-payment-method" value="Banco de Chile" onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal">
                             <i class="fa-solid fa-building-columns text-upago-blue text-base"></i>
                             <span class="font-bold text-gray-800 text-sm">Banco de Chile</span>
                         </label>
                         <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
-                            <input type="radio" name="micarro-payment-method" value="BancoEstado" onchange="togglePayCardForm('micarro', false)" class="text-ccu-teal">
+                            <input type="radio" name="micarro-payment-method" value="BancoEstado" onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal">
                             <i class="fa-solid fa-landmark text-orange-600 text-base"></i>
                             <span class="font-bold text-gray-800 text-sm">BancoEstado</span>
                         </label>
                         <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
-                            <input type="radio" name="micarro-payment-method" value="SERVIPAG" onchange="togglePayCardForm('micarro', false)" class="text-ccu-teal">
+                            <input type="radio" name="micarro-payment-method" value="SERVIPAG" onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal">
                             <i class="fa-solid fa-receipt text-amber-500 text-base"></i>
                             <span class="font-bold text-gray-800 text-sm">SERVIPAG</span>
                         </label>
                         <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
-                            <input type="radio" name="micarro-payment-method" value="Santander" onchange="togglePayCardForm('micarro', false)" class="text-ccu-teal">
+                            <input type="radio" name="micarro-payment-method" value="Santander" onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal">
                             <i class="fa-solid fa-credit-card text-red-600 text-base"></i>
                             <span class="font-bold text-gray-800 text-sm">Santander</span>
                         </label>
 
                         <!-- OPCIÓN: SALDO WALLET (según doc de cambios) -->
                         <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
-                            <input type="radio" name="micarro-payment-method" value="Saldo Wallet CreCCU" onchange="togglePayCardForm('micarro', false)" class="text-ccu-teal">
+                            <input type="radio" name="micarro-payment-method" value="Saldo Wallet CreCCU" onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal">
                             <i class="fa-solid fa-wallet text-ccu-teal text-base"></i>
                             <div>
                                 <span class="font-bold text-gray-800 text-sm block">Saldo Wallet CreCCU</span>
@@ -312,7 +312,7 @@
 
                         <!-- OPCIÓN: TARJETA DE CRÉDITO/DÉBITO (TRX COMPLETA + GUARDADAS) -->
                         <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:border-ccu-teal bg-white">
-                            <input type="radio" name="micarro-payment-method" value="card" onchange="togglePayCardForm('micarro', true)" class="text-ccu-teal">
+                            <input type="radio" name="micarro-payment-method" value="card" onchange="togglePayCardForm('micarro', true); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal">
                             <i class="fa-solid fa-credit-card text-upago-dark text-base"></i>
                             <span class="font-bold text-gray-800 text-sm">Tarjeta de Crédito/Débito</span>
                         </label>
@@ -359,7 +359,7 @@
                         <!-- OPCIÓN: CONTADO -->
                         <label class="border p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-gray-300 transition-all bg-white">
                             <div class="flex items-center gap-3">
-                                <input type="radio" name="micarro-payment-method" value="contado" onchange="togglePayCardForm('micarro', false)" class="text-ccu-teal text-lg">
+                                <input type="radio" name="micarro-payment-method" value="contado" onchange="togglePayCardForm('micarro', false); syncWalletCombineCheckbox(this.value)" class="text-ccu-teal text-lg">
                                 <div>
                                     <span class="font-bold text-sm block text-gray-900">Contado</span>
                                     <span class="text-xs text-gray-500 block">Pago contra entrega en camión</span>
@@ -1472,6 +1472,27 @@
         function goToCreccuPayStep(step) {
             document.getElementById('creccu-pay-step-1').classList.toggle('hidden', step !== 1);
             document.getElementById('creccu-pay-step-2').classList.toggle('hidden', step !== 2);
+        }
+
+        // EL RADIOBUTTON MANDA: si el medio de pago elegido ya ES Saldo Wallet CreCCU,
+        // el checkbox de "combinar Wallet" pierde sentido (sería pagar Wallet con Wallet) — se desmarca y deshabilita.
+        function syncWalletCombineCheckbox(selectedMethodValue) {
+            const chk = document.getElementById('chk-combine-wallet-micarro');
+            const label = document.getElementById('label-combine-wallet-micarro');
+            const text = document.getElementById('label-combine-wallet-text');
+            if (!chk) return;
+            if (selectedMethodValue === 'Saldo Wallet CreCCU') {
+                chk.checked = false;
+                chk.disabled = true;
+                label.className = "flex items-start gap-2.5 p-3 bg-gray-100 border border-gray-200 rounded-xl text-xs cursor-not-allowed transition-all opacity-60";
+                text.className = "text-gray-500";
+                text.innerHTML = "Ya estás pagando con tu <strong>Saldo Wallet CreCCU</strong> — esta opción solo aplica si eliges otro medio de pago distinto.";
+            } else {
+                chk.disabled = false;
+                label.className = "flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs cursor-pointer transition-all";
+                text.className = "text-amber-900";
+                text.innerHTML = "<strong>Usar también mi Saldo Wallet CreCCU disponible ($5.954)</strong> para completar este pago, junto al medio que selecciones abajo.";
+            }
         }
 
         // MUESTRA/OCULTA EL FORMULARIO DE TARJETA (TRX COMPLETA) SEGÚN EL MEDIO ELEGIDO
